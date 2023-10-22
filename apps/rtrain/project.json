@@ -16,7 +16,10 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/rtrain/tsconfig.app.json",
         "assets": ["apps/rtrain/src/favicon.ico", "apps/rtrain/src/assets"],
-        "styles": ["apps/rtrain/src/styles.scss"],
+        "styles": [
+          "apps/rtrain/src/styles.scss",
+          "node_modules/primeicons/primeicons.css"
+        ],
         "scripts": []
       },
       "configurations": {
