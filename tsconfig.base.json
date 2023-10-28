@@ -16,7 +16,9 @@
     "baseUrl": ".",
     "paths": {
       "@rtrain/shell/auth": ["libs/shell/auth/src/index.ts"],
-      "@rtrain/ui/layout": ["libs/ui/layout/src/index.ts"]
+      "@rtrain/ui/layout": ["libs/ui/layout/src/index.ts"],
+      "@rtrain/domain/models": ["libs/domain/models/index.ts"],
+      "@rtrain/api": ["libs/api/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
