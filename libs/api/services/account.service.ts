@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {apiAddress} from "../env-variable";
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {AccountModel, ILoginModel, JWTToken} from "../../domain/models";
+import {AccountModel, IAccountModel, ILoginModel, JWTToken} from "../../domain/models";
 import {BehaviorSubject, catchError, map, Observable, tap, throwError} from "rxjs";
 
 
@@ -36,7 +36,7 @@ export class AccountService {
 
   getAccount(): Observable<AccountModel> {
     return this.http.get<AccountModel>(`${this.baseURL}/getCurrentUser`).pipe(
-      tap((account: AccountModel) => {
+      tap((account: IAccountModel) => {
         this.accountSubject$.next(account);
       })
     )

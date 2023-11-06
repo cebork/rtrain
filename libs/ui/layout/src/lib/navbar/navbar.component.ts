@@ -16,6 +16,27 @@ export class NavbarComponent implements OnInit {
   account: AccountModel | null | undefined;
   visible = false;
 
+  menuItems = [
+    {
+      label: "Test 1",
+      icon: "pi pi-fw pi-book",
+      routerLink: "/",
+      disabled: false
+    },
+    {
+      label: "Test 2",
+      icon: "pi pi-fw pi-file",
+      routerLink: "/pd",
+      disabled: true
+    },
+    {
+      label: "Test 3",
+      icon: "pi pi-fw pi-chart-line",
+      routerLink: "/risk",
+      disabled: true
+    }
+  ];
+
   constructor(
     private store: Store<AuthState>,
     private route: ActivatedRoute,

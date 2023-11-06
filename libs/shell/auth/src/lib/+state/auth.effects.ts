@@ -1,10 +1,10 @@
 import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
-import {catchError, exhaustMap, map, of, switchMap, tap} from "rxjs";
+import {catchError, exhaustMap, map, mergeMap, of, switchMap, tap} from "rxjs";
 import * as authActions from "./auth.action";
 import {AuthActionTypes} from "./auth.action";
 import {AccountService} from "@rtrain/api";
-import {Router} from "@angular/router";
+import {ActivatedRoute, ActivatedRouteSnapshot, Router} from "@angular/router";
 @Injectable()
 export class AuthEffects {
   login$ = createEffect(() =>
@@ -43,7 +43,33 @@ export class AuthEffects {
     )
   );
 
+  sessionRenewed$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActionTypes.SessionRenewed),
+      exhaustMap((action: authActions.SessionRenewed) =>
+        of(action).pipe(
+          mergeMap((account) => {
+            const routeAuthorities = this.getRouteAuthorities();
+            // if (routeAuthorities && account && account.authorities && !account.authorities.some(authority => routeAuthorities.includes(authority))) {
+            //   this.router.navigate(['accessdenied']);
+            // }
+            return of(new authActions.SetLoading(false));
+          })
+        )
+      )
+    )
+  );
 
+//   this.accountService.getAccount().pipe(
+//     mergeMap((account) => {
+//   const routeAuthorities = this.getRouteAuthorities();
+//   // if (routeAuthorities && account && account.authorities && !account.authorities.some(authority => routeAuthorities.includes(authority))) {
+//   //   this.router.navigate(['accessdenied']);
+//   // }
+//   return of(new authActions.SetLoading(false));
+// }),
+// catchError((error) => of(new authActions.LoginFail(error)))
+// )
   loginSucces$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -66,7 +92,21 @@ export class AuthEffects {
   constructor(
     private actions$: Actions,
     private accountService: AccountService,
-    private router: Router
-  ) {
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {}
+
+  private getLastActivatedRouteWithData(routeSnapshot: ActivatedRouteSnapshot): ActivatedRouteSnapshot | null {
+    let lastRoute = routeSnapshot;
+    while (lastRoute.firstChild) {
+      lastRoute = lastRoute.firstChild;
+    }
+    return lastRoute.data && (Object.keys(lastRoute.data).length > 0) ? lastRoute : null;
+  }
+
+  private getRouteAuthorities(): string[] | undefined {
+    const root = this.activatedRoute.snapshot;
+    const deepestRoute = this.getLastActivatedRouteWithData(root);
+    return deepestRoute?.data['authorities'];
   }
 }

@@ -34,6 +34,17 @@ module.exports = {
           DEFAULT: '#26BAA4',
           dark: '#1A907D',   // Approximate darker shade
         },
+        text: "#030d16",
+        body: "#edf3fb",
+        navbar: {
+          bg: {
+            100: "#1c4263",
+            200: "#03294a",
+            gradient: "linear-gradient(1deg, #03294,transparent)",
+          },
+          menuitems: "white",
+          menuitemsHover: "#7dabcc"
+        },
       }
     },
   },

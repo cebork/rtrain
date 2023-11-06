@@ -1,13 +1,27 @@
 <div *ngIf="visible" class="bg-primary flex sticky h-full max-h-screen min-h-screen top-0 bottom-0 left-0 w-[15vw] flex-col items-center rounded-r-lg" >
   <div class="justify-center items-center w-full ">
-    <img src="assets/logo.png" class="w-1/5 ml-2 mt-2 float-left">
-    <div class="flex flex-row float-right text-2xl ">
-      <span class="m-3"><i class="pi pi-user"></i></span>
-      <a href="/auth/logout"><span class="m-3"><i class="pi pi-sign-out"></i></span></a>
+    <img src="assets/logo.png" class="w-1/5 ml-2 mt-2 float-left hover:cursor-pointer">
+    <div class="flex flex-row float-right text-xl ">
+      <a [routerLink]="['admin']" class="my-3 px-3 hover:bg-background-light hover:rounded-md hover:px-3 hover:cursor-pointer"><i class="pi pi-cog"></i></a>
+      <span class="my-3 px-3 hover:bg-background-light hover:rounded-md hover:px-3 hover:cursor-pointer"><i class="pi pi-user"></i></span>
+      <a href="/auth/logout" class="my-3 mr-2 px-3 hover:bg-background-light hover:rounded-md hover:px-3 hover:cursor-pointer"><i class="pi pi-sign-out"></i></a>
     </div>
   </div>
-  <div class="justify-center items-center w-full bg-primary-light h-[33vh]">
-    <div class=" ">
+  <div class="justify-center items-center w-full bg-primary-light h-96">
+    <div class="bg-gray-100 rounded-full w-32 h-32 object-contain flex items-center justify-center shadow-inner cursor-pointer m-auto mt-8" [routerLink]="['profile']">
+      <img src="{{ account?.image || '/assets/avatar.png' }}" alt="" class="w-32 h-32 rounded-full" />
+    </div>
+
+    <p class="font-bold mt-3 uppercase text-white text-lg text-center">{{ account?.firstName }} {{ account?.lastName }}</p>
+    <p class="font-bold uppercase text-white text-sm my-1 text-center">{{ account?.jobPosition }}</p>
+<!--      <p class="text-gray-300 text-sm" *ngIf="account?.organization">[{{ account?.organization?.shortName }}] {{ account?.organization?.name }}</p>-->
+  </div>
+  <div class="flex flex-col justify-between h-full mb-10 w-full">
+    <div class="flex flex-col  justify-center w-full mt-5">
+      <a *ngFor="let item of menuItems" [ngClass]="'nav-btn'" [routerLink]="[item.routerLink]" [routerLinkActive]="['active-link']" >
+        <i class="{{ item.icon }} text-lg"></i>
+        <span class="uppercase w-full">{{ item.label }}</span>
+      </a>
 
     </div>
   </div>
