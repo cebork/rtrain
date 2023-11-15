@@ -1,0 +1,99 @@
+<div class="flex flex-col">
+  <div class="flex flex-row items-center m-10 px-5">
+    <h3 class="text-2xl font-semibold"><fa-icon class="fas fa-people-group"></fa-icon>&nbsp; Zarządzanie użytkownikami</h3>
+    <div class=" ml-auto">
+      <button [routerLink]="['/admin']" type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"><fa-icon class="fas fa-arrow-left"></fa-icon> Wstecz</button>
+      <button [routerLink]="['/admin/users/create']" type="button" class="ml-auto focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><fa-icon class="fas fa-add"></fa-icon> Dodaj nowego użytkownika</button>
+    </div>
+  </div>
+  <div class="flex flex-row m-auto">
+    <div class="card">
+
+      <p-table #dt1 [value]="users" [lazy]="true" (onLazyLoad)="loadUsers($event)"
+               [paginator]="true" [rows]="10" [totalRecords]="totalRecords"
+               [loading]="loading" [sortField]="defaultSortField" [sortOrder]="defaultSortOrder">
+        <ng-template pTemplate="caption">
+          <div class="flex">
+            <button type="button" (click)="clear(dt1, filterInput)" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+              <i class="pi pi-filter-slash"></i> Wyczyść filtry
+            </button>
+            <span class="flex items-center ml-auto">
+              <i class="pi pi-search"></i>
+              <input #filterInput type="text" (input)="filter($event.target, dt1)" placeholder="Wyszukaj" class="pl-2"/>
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="firstName" style="min-width:10rem">
+              <div class="flex items-center justify-start">
+                <p>Imię</p>
+                <p-sortIcon field="firstName"></p-sortIcon>
+              </div>
+
+            </th>
+            <th pSortableColumn="lastName" style="min-width:15rem">
+              <div class="flex items-center justify-start">
+                <p>Nazwisko</p>
+                <p-sortIcon field="lastName"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="email" style="min-width:15rem">
+              <div class="flex items-center justify-start">
+                <p>Email</p>
+                <p-sortIcon field="email"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="phoneNumber" style="min-width:10rem">
+              <div class="flex items-center justify-start">
+                <p>Numer telefonu</p>
+                <p-sortIcon field="phoneNumber"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="emailConfirmed" style="min-width:10rem">
+              <div class="flex items-center justify-start">
+                <p>Czy aktywny?</p>
+                <p-sortIcon field="emailConfirmed"></p-sortIcon>
+              </div>
+            </th>
+            <th style="min-width:15rem">
+              <div class="flex justify-content-center align-items-center">
+                Akcje
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>
+              {{user.firstName}}
+            </td>
+            <td>
+              {{user.lastName}}
+            </td>
+            <td>
+              {{user.email}}
+            </td>
+            <td>
+              {{user.phoneNumber ? user.phoneNumber : 'brak'}}
+            </td>
+            <td>
+              <p-badge  [value]="user.emailConfirmed ? 'Aktywny' : 'Nie aktywny'" [severity]="user.emailConfirmed ? 'success' : 'danger'"></p-badge>
+            </td>
+            <td>
+              <button [routerLink]="['/admin/users/view/' + user.id]" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Podgląd</button>
+              <button [routerLink]="['/admin/users/edit/' + user.id]" type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">Edycja</button>
+              <button (click)="delete(user.id)" type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Usuń</button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">No customers found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+

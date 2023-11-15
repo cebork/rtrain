@@ -60,16 +60,6 @@ export class AuthEffects {
     )
   );
 
-//   this.accountService.getAccount().pipe(
-//     mergeMap((account) => {
-//   const routeAuthorities = this.getRouteAuthorities();
-//   // if (routeAuthorities && account && account.authorities && !account.authorities.some(authority => routeAuthorities.includes(authority))) {
-//   //   this.router.navigate(['accessdenied']);
-//   // }
-//   return of(new authActions.SetLoading(false));
-// }),
-// catchError((error) => of(new authActions.LoginFail(error)))
-// )
   loginSucces$ = createEffect(
     () =>
       this.actions$.pipe(

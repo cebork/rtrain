@@ -15,10 +15,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@rtrain/shell/auth": ["libs/shell/auth/src/index.ts"],
-      "@rtrain/ui/layout": ["libs/ui/layout/src/index.ts"],
+      "@rtrain/api": ["libs/api/index.ts"],
       "@rtrain/domain/models": ["libs/domain/models/index.ts"],
-      "@rtrain/api": ["libs/api/index.ts"]
+      "@rtrain/features/admin": ["libs/features/admin/src/index.ts"],
+      "@rtrain/shell/auth": ["libs/shell/auth/src/index.ts"],
+      "@rtrain/ui/layout": ["libs/ui/layout/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,6 +1,6 @@
-<div *ngIf="visible" class="bg-primary flex sticky h-full max-h-screen min-h-screen top-0 bottom-0 left-0 w-[15vw] flex-col items-center rounded-r-lg" >
+<div *ngIf="visible" class="bg-primary flex sticky h-full max-h-screen min-h-screen top-0 bottom-0 left-0  flex-col items-center rounded-r-lg" >
   <div class="justify-center items-center w-full ">
-    <img src="assets/logo.png" class="w-1/5 ml-2 mt-2 float-left hover:cursor-pointer">
+    <img [routerLink]="['/']" src="assets/logo.png" class="w-1/5 ml-2 mt-2 float-left hover:cursor-pointer">
     <div class="flex flex-row float-right text-xl ">
       <a [routerLink]="['admin']" class="my-3 px-3 hover:bg-background-light hover:rounded-md hover:px-3 hover:cursor-pointer"><i class="pi pi-cog"></i></a>
       <span class="my-3 px-3 hover:bg-background-light hover:rounded-md hover:px-3 hover:cursor-pointer"><i class="pi pi-user"></i></span>

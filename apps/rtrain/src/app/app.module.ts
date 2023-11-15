@@ -6,10 +6,14 @@ import { appRoutes } from './app.routes';
 import { UiLayoutModule } from '@rtrain/ui/layout';
 import { HomeComponent } from './home/home.component';
 import { ShellAuthModule } from "@rtrain/shell/auth";
-import {StoreModule} from "@ngrx/store";
-import {EffectsModule} from "@ngrx/effects";
+import { StoreModule} from "@ngrx/store";
+import { EffectsModule } from "@ngrx/effects";
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import {StoreRouterConnectingModule} from "@ngrx/router-store";
+import { StoreRouterConnectingModule } from "@ngrx/router-store";
+import { FeaturesAdminModule } from "@rtrain/features/admin";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+
 @NgModule({
   declarations: [AppComponent, HomeComponent],
   imports: [
@@ -20,7 +24,10 @@ import {StoreRouterConnectingModule} from "@ngrx/router-store";
     StoreModule.forRoot([]),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument(),
-    StoreRouterConnectingModule
+    StoreRouterConnectingModule,
+    FeaturesAdminModule,
+    BrowserAnimationsModule,
+    FontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -1,0 +1,51 @@
+<div class="flex flex-row m-10 px-5">
+  <h3 *ngIf="!isView" class="text-2xl font-semibold"><fa-icon class="fas fa-user-plus"></fa-icon>&nbsp; Tworzenie/Edycja użytkownika</h3>
+  <h3 *ngIf="isView" class="text-2xl font-semibold"><fa-icon class="fas fa-user"></fa-icon>&nbsp; Podgląd użytkownika</h3>
+  <button [routerLink]="['/admin/users']" type="button" class="ml-auto focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"><fa-icon class="fas fa-arrow-left"></fa-icon> Wstecz</button>
+</div>
+<div class="flex flex-row bg-white m-10 p-10 rounded-2xl">
+  <form #formRef="ngForm" (submit)="submit()" class="flex flex-col w-full">
+    <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">
+      <input [(ngModel)]="user.userName" [disabled]="isView" type="text" name="floating_userName" id="floating_userName" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+      <label for="floating_userName" class="absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:font-medium peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nazwa użytkownika</label>
+    </div>
+    <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">
+      <input [(ngModel)]="user.email" [disabled]="isView" type="email" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" name="floating_email" id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+      <label for="floating_email" class="absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:font-medium peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email</label>
+    </div>
+    <div class="grid md:grid-cols-2 md:gap-6">
+      <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">
+        <input [(ngModel)]="user.firstName" [disabled]="isView" type="text" name="floating_first_name" id="floating_first_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+        <label for="floating_first_name" class="peer-focus:font-medium absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Imię</label>
+      </div>
+      <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">
+        <input [(ngModel)]="user.lastName" [disabled]="isView" type="text" name="floating_last_name" id="floating_last_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+        <label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nazwisko</label>
+      </div>
+    </div>
+    <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">
+      <input [(ngModel)]="user.phoneNumber" [disabled]="isView" type="text" pattern="[0-9]{3}[0-9]{3}[0-9]{3}" name="floating_phone" id="floating_phone" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+      <label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Numer telefonu</label>
+    </div>
+    <div class="relative z-10 w-full mb-6 group">
+      <select [(ngModel)]="user.transportCompanyId" [disabled]="isView" name="transport_company" id="transport_company" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+        <option [ngValue]="undefined" selected disabled>Wybierz przewoźnika</option>
+        <option *ngFor="let transportCompany of transportCompanies" [ngValue]="transportCompany.id">{{transportCompany.name}}</option>
+      </select>
+      <label for="transport_company" class="absolute peer-focus:font-medium text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 left-0 top-3 bg-white mx-2 z-50 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Przewoźnik</label>
+    </div>
+    <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">
+      <input [(ngModel)]="user.jobPosition"  [disabled]="isView" type="text" name="job_position" id="job_position" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+      <label for="job_position" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Stanowisko pracy</label>
+    </div>
+    <div *ngIf="this.user.roles" class="flex flex-wrap mb-5">
+      <div class="flex flex-row w-full">Role: </div>
+      <div *ngFor="let role of roles" class="flex flex-row items-center me-8 ">
+        <input (click)="selectingRoles(role)" id="inline-checkbox" type="checkbox" [checked]="checkIfUserContainsRole(role.name!)" [disabled]="isView" [value]="role" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+        <label for="inline-checkbox" class="ms-2 text-sm font-medium text-gray-900">{{role.name}}</label>
+      </div>
+    </div>
+    <button  type="submit"  [disabled]="!formRef.valid" *ngIf="!isView" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>
+  </form>
+</div>
+

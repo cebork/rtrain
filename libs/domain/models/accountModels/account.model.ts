@@ -1,41 +1,54 @@
+import {IRoleModel} from "../roleModels/role.model";
+import {active} from "d3";
+
 export interface IAccountModel {
-    email: string;
-    password: string;
-    image?: string;
-    firstName: string;
-    lastName: string;
-    jobPosition: string;
+    // email: string;
+    // password: string;
+    // image?: string;
+    // firstName: string;
+    // lastName: string;
+    // jobPosition: string;
+
+  id?: string;
+  userName?: string;
+  firstName?: string;
+  lastName?: string;
+  jobPosition?: string;
+  transportCompanyId?: string;
+  email?: string;
+  phoneNumber?: string
+  emailConfirmed?: boolean;
+  active?: boolean;
+  roles?: IRoleModel[];
+
 }
 
-export class AccountModel implements IAccountModel{
-  email: string;
-  password: string;
-  firstName: string;
+export class AccountModel implements IAccountModel {
+  id?: string;
+  userName?: string;
+  firstName?: string;
+  lastName?: string;
+  jobPosition?: string;
+  transportCompanyId?: string;
+  email?: string;
+  phoneNumber?: string
+  emailConfirmed?: boolean;
+  active?: boolean;
   image?: string;
-  jobPosition: string;
-  lastName: string;
+  roles?: IRoleModel[];
 
 
-  constructor(email: string, password: string, firstName: string, image: string, jobPosition: string, lastName: string) {
-    this.email = email;
-    this.password = password;
+  constructor(id?: string, userName?: string, firstName?: string, lastName?: string, jobPosition?: string, transportCompanyId?: string, email?: string, phoneNumber?: string, emailConfirmed?: boolean, active?: boolean, roles?: IRoleModel[]) {
+    this.id = id;
+    this.userName = userName;
     this.firstName = firstName;
-    this.image = image;
-    this.jobPosition = jobPosition;
     this.lastName = lastName;
+    this.jobPosition = jobPosition;
+    this.transportCompanyId = transportCompanyId;
+    this.email = email;
+    this.phoneNumber = phoneNumber;
+    this.emailConfirmed = emailConfirmed;
+    this.active = active;
+    this.roles = roles;
   }
-
-  // accountDTO: { email: string; password: string; image?: string | undefined; firstName: string; lastName: string; jobPosition: string; };
-
-
-  // constructor(accountDTO: {
-  //   email: string;
-  //   password: string;
-  //   image?: string | undefined;
-  //   firstName: string;
-  //   lastName: string;
-  //   jobPosition: string
-  // }) {
-  //   this.accountDTO = accountDTO;
-  // }
 }

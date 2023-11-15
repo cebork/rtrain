@@ -13,6 +13,8 @@ export class AccountService {
   constructor(private http: HttpClient) {}
 
   login(loginModel: ILoginModel): Observable<string>{
+    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
     return this.http.post(`${this.baseURL}/login`, loginModel, { responseType: 'json', observe: 'response' })
       .pipe(
         map(response => {

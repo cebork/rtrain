@@ -14,6 +14,10 @@ export class AuthGuard {
     return this.store.pipe(
       select((state) => state.auth.account),
       switchMap((account) => {
+        // if (account && next.url.toString().includes('/auth/login')) {
+        //   this.router.navigate(["/"]);
+        //   return of(false)
+        // }
         if (account) return of(true);
 
         const isToken = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
