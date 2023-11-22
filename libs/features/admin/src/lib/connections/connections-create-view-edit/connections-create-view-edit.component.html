@@ -1,0 +1,144 @@
+<div class="flex flex-row m-10 px-5">
+  <h3 *ngIf="!isView" class="text-2xl font-semibold"><fa-icon class="fa-brands fa-connectdevelop"></fa-icon>&nbsp; Tworzenie/Edycja połączeń - {{line.name}}</h3>
+  <h3 *ngIf="isView" class="text-2xl font-semibold"><fa-icon class="fa-brands fa-connectdevelop"></fa-icon>&nbsp; Podgląd połączeń - {{line.name}}</h3>
+  <button [routerLink]="['/admin/connections']" type="button" class="ml-auto focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"><fa-icon class="fas fa-arrow-left"></fa-icon> Wstecz</button>
+</div>
+<div class="flex flex-row bg-white m-10 p-10 rounded-2xl">
+  <form #formRef="ngForm" (submit)="submit()" class="flex flex-col w-full">
+<!--    <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">-->
+<!--      <input [(ngModel)]="line.name" [disabled]="isView" type="text" name="name" id="name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />-->
+<!--      <label for="name" class="absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:font-medium peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nazwa</label>-->
+<!--    </div>-->
+<!--    <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">-->
+<!--      <input [(ngModel)]="line.symbol" [disabled]="isView" type="text" name="symbol" id="symbol" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />-->
+<!--      <label for="symbol" class="absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:font-medium peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Symbol</label>-->
+<!--    </div>-->
+<!--    <div class="flex flex-row">-->
+<!--      <div class="relative z-10 w-1/2 mb-6 group mr-3">-->
+<!--        <select (change)="setStationsForRightEdge()" [(ngModel)]="line.leftEdgeStationId" [disabled]="isView" name="leftEdgeStations" id="leftEdgeStations" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>-->
+<!--          <option [ngValue]="undefined" selected disabled>Wybierz stację początkową</option>-->
+<!--          <option *ngFor="let leftStation of leftEdgeStations" [ngValue]="leftStation.id">{{leftStation.name}}</option>-->
+<!--        </select>-->
+<!--        <label for="leftEdgeStations" class="absolute peer-focus:font-medium text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 left-0 top-3 bg-white mx-2 z-50 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Typ stacji</label>-->
+<!--      </div>-->
+<!--      <div class="relative z-10 w-1/2 mb-6 group ml-3">-->
+<!--        <select [(ngModel)]="line.rightEdgeStationId" [disabled]="isView || rightDisabled" name="rightEdgeStation" id="rightEdgeStation" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>-->
+<!--          <option [ngValue]="undefined" selected disabled>Wybierz stację końcową</option>-->
+<!--          <option *ngFor="let rightStation of rightEdgeStations" [ngValue]="rightStation.id">{{rightStation.name}}</option>-->
+<!--        </select>-->
+<!--        <label for="rightEdgeStation" class="absolute peer-focus:font-medium text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 left-0 top-3 bg-white mx-2 z-50 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Typ stacji</label>-->
+<!--      </div>-->
+<!--    </div>-->
+
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-5">
+      <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3">
+            Lp.
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Stacja lewa
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Stacja Prawa
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Odległość [km]
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Czy jeden tor?
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Akcja
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngIf="localRoutes.length === 0" class="odd:bg-white even:bg-gray-50 border-b">
+          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+            1
+          </th>
+          <td class="px-6 py-4">
+            {{line.leftEdgeStation?.name}}
+
+          </td>
+          <td class="px-6 py-4">
+            {{line.rightEdgeStation?.name}}
+          </td>
+          <td class="px-6 py-4">
+            {{line.distance}}
+          </td>
+          <td>
+            NIE
+          </td>
+          <td>
+            <button (click)="addBelow(0)" *ngIf="!isView" type="button" class="text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-lime-300 shadow-lg shadow-lime-500/50 font-medium rounded-lg text-sm px-1.5 py-2.5 text-center me-2 mb-2">
+              <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;
+              <i class="fa fa-plus" aria-hidden="true"></i>
+            </button>
+          </td>
+        </tr>
+        <tr class="odd:bg-white even:bg-gray-50 border-b" *ngFor="let localRoute of localRoutes; let idx = index; let first = first; let last = last">
+          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+            {{localRoute.order}}
+          </th>
+          <td class="px-6 py-4">
+            {{localRoute.fromStation?.name}}
+            <div class="relative z-10 group mr-3" *ngIf="!localRoute.fromStation?.id">
+              <select [(ngModel)]="selectedStationId" [disabled]="isView" name="leftStation" id="leftStation" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                <option [ngValue]="undefined" selected disabled>Wybierz stację początkową</option>
+                <option *ngFor="let station of filtredStations" [ngValue]="station.id">{{station.name}}</option>
+              </select>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            {{localRoute.toStation?.name}}
+            <div class="relative z-10 group mr-3" *ngIf="!localRoute.toStation?.id">
+              <select [(ngModel)]="selectedStationId" [disabled]="isView" name="rightStation" id="rightStation" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                <option [ngValue]="undefined" selected disabled>Wybierz stację końcową</option>
+                <option *ngFor="let station of filtredStations" [ngValue]="station.id">{{station.name}}</option>
+              </select>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            {{localRoute.distance}}
+            <div class="relative z-0 w-full group bg-accent-light bg-opacity-10" *ngIf="!localRoute.distance">
+              <input [(ngModel)]="selectedDistance" [disabled]="isView" type="number" name="job_position" id="job_position" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+            </div>
+          </td>
+          <td>
+            {{displayOneWay(localRoute)}}
+            <div class="relative z-10 group mr-3" *ngIf="localRoute.oneWay === undefined">
+              <select [(ngModel)]="selectedOneWay" [disabled]="isView" name="oneWay" id="oneWay" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                <option [ngValue]="undefined" selected disabled>Czy jeden tor?</option>
+                <option [ngValue]="true">TAK</option>
+                <option [ngValue]="false">NIE</option>
+              </select>
+            </div>
+          </td>
+          <td>
+            <button (click)="addNew(idx)" *ngIf="!isView && isEdited && editedIndex === idx" [disabled]="!selectedStationId" type="button" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 shadow-lg shadow-green-500/50 font-medium rounded-lg text-sm px-3 py-2.5 text-center me-2 mb-2">
+              <i class="fa-solid fa-check" aria-hidden="true"></i>&nbsp;
+            </button>
+            <button (click)="discard()" *ngIf="!isView && isEdited && editedIndex === idx" type="button" class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3.5 py-2.5 text-center me-2 mb-2">
+              <i class="fa fa-ban" aria-hidden="true"></i>
+            </button>
+            <button (click)="addBelow(idx)" *ngIf="(!last && !isView && !isEdited) || localRoutes.length === 1" type="button" class="text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-lime-300 shadow-lg shadow-lime-500/50 font-medium rounded-lg text-sm px-1.5 py-2.5 text-center me-2 mb-2">
+              <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;
+              <i class="fa fa-plus" aria-hidden="true"></i>
+            </button>
+            <button (click)="remove(idx)" *ngIf="idx !== localRoutes.length - 1 && !isView && !isEdited" type="button" class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3.5 py-2.5 text-center me-2 mb-2">
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <button  type="submit"  [disabled]="!formRef.valid" *ngIf="!isView" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>
+  </form>
+</div>

@@ -35,4 +35,13 @@ export class StationService {
   delete(userId: string): Observable<HttpResponse<IStationModel>> {
     return this.http.delete(`${this.baseURL}/Delete/${userId}`, {observe: 'response', responseType: "json"})
   }
+
+  getAllForLines() : Observable<HttpResponse<IStationModel[]>> {
+    return this.http.get<IStationModel[]>(`${this.baseURL}/getAllForLines`, {observe: "response", responseType: "json"});
+  }
+
+  getAllForConnections() : Observable<HttpResponse<IStationModel[]>> {
+    return this.http.get<IStationModel[]>(`${this.baseURL}/getAllForConnections`, {observe: "response", responseType: "json"});
+  }
+
 }

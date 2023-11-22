@@ -8,7 +8,13 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TrainsComponent } from './trains/trains.component';
 import { TableModule } from 'primeng/table';
 import { UsersHomeComponent } from './users/users-home/users-home.component';
-import {RoleService, StationService, TransportCompanyService, UserService} from '@rtrain/api';
+import {
+  LocalRouteService,
+  RoleService,
+  StationService,
+  TransportCompanyService,
+  UserService,
+} from '@rtrain/api';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { UserCreateViewEditComponent } from './users/user-create-view-edit/user-create-view-edit.component';
@@ -18,6 +24,11 @@ import { TransportCompaniesHomeComponent } from './transport-companies/transport
 import { TransportCompanyCreateViewEditComponent } from './transport-companies/transport-company-create-view-edit/transport-company-create-view-edit.component';
 import { StationCreateViewEditComponent } from './stations/station-create-view-edit/station-create-view-edit.component';
 import { StationHomeComponent } from './stations/station-home/station-home.component';
+import { LineService } from '../../../../api/services/line.service';
+import { LinesHomeComponent } from './lines/lines-home/lines-home.component';
+import { LinesCreateViewEditComponent } from './lines/lines-create-view-edit/lines-create-view-edit.component';
+import { ConnectionsCreateViewEditComponent } from './connections/connections-create-view-edit/connections-create-view-edit.component';
+import { ConnectionsHomeComponent } from './connections/connections-home/connections-home.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -40,7 +51,18 @@ import { StationHomeComponent } from './stations/station-home/station-home.compo
     TransportCompanyCreateViewEditComponent,
     StationCreateViewEditComponent,
     StationHomeComponent,
+    LinesHomeComponent,
+    LinesCreateViewEditComponent,
+    ConnectionsCreateViewEditComponent,
+    ConnectionsHomeComponent,
   ],
-  providers: [UserService, TransportCompanyService, RoleService, StationService],
+  providers: [
+    UserService,
+    TransportCompanyService,
+    RoleService,
+    StationService,
+    LineService,
+    LocalRouteService
+  ],
 })
 export class FeaturesAdminModule {}

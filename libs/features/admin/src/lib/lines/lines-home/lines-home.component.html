@@ -1,0 +1,91 @@
+<div class="flex flex-col">
+  <div class="flex flex-row items-center m-10 px-5">
+    <h3 class="text-2xl font-semibold"><fa-icon class="fas fa-grip-lines"></fa-icon>&nbsp; Zarządzanie liniami</h3>
+    <div class=" ml-auto">
+      <button [routerLink]="['/admin']" type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"><fa-icon class="fas fa-arrow-left"></fa-icon> Wstecz</button>
+      <button [routerLink]="['/admin/lines/create']" type="button" class="ml-auto focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><fa-icon class="fas fa-add"></fa-icon> Dodaj nową linie</button>
+    </div>
+  </div>
+  <div class="flex flex-row m-auto">
+    <div class="card">
+
+      <p-table #dt1 [value]="lines" [lazy]="true" (onLazyLoad)="loadLines($event)"
+               [paginator]="true" [rows]="10" [totalRecords]="totalRecords"
+               [loading]="loading" [sortField]="defaultSortField" [sortOrder]="defaultSortOrder">
+        <ng-template pTemplate="caption">
+          <div class="flex">
+            <button type="button"  (click)="clear(dt1, filterInput)" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+              <i class="pi pi-filter-slash"></i> Wyczyść filtry
+            </button>
+            <span class="flex items-center ml-auto">
+              <i class="pi pi-search"></i>
+              <input #filterInput type="text" (input)="filter($event.target, dt1)" placeholder="Wyszukaj" class="pl-2"/>
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="name" style="min-width:15rem">
+              <div class="flex items-center justify-start">
+                <p>Nazwa</p>
+                <p-sortIcon field="name"></p-sortIcon>
+              </div>
+
+            </th>
+            <th pSortableColumn="symbol" style="min-width:15rem">
+              <div class="flex items-center justify-start">
+                <p>Symbol</p>
+                <p-sortIcon field="symbol"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="leftEdgeStation" style="min-width:15rem">
+              <div class="flex items-center justify-start">
+                <p>Lewa stacja końcowa</p>
+                <p-sortIcon field="leftEdgeStation"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="rightEdgeStation" style="min-width:15rem">
+              <div class="flex items-center justify-start">
+                <p>Prawa stacja końcowa</p>
+                <p-sortIcon field="rightEdgeStation"></p-sortIcon>
+              </div>
+            </th>
+            <th style="min-width:15rem">
+              <div class="flex justify-content-center align-items-center">
+                Akcje
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-line>
+          <tr>
+            <td>
+              {{line.name}}
+            </td>
+            <td>
+              {{line.symbol }}
+            </td>
+            <td>
+              {{line.leftEdgeStation.name }}
+            </td>
+            <td>
+              {{line.rightEdgeStation.name }}
+            </td>
+            <td>
+              <button [routerLink]="['/admin/lines/view/' + line.id]" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Podgląd</button>
+              <button [routerLink]="['/admin/lines/edit/' + line.id]" type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">Edycja</button>
+              <button (click)="delete(line.id)" type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Usuń</button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">No customers found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+

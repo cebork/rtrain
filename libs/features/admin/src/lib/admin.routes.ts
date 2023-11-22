@@ -12,6 +12,12 @@ import {
 } from "./transport-companies/transport-company-create-view-edit/transport-company-create-view-edit.component";
 import {StationHomeComponent} from "./stations/station-home/station-home.component";
 import {StationCreateViewEditComponent} from "./stations/station-create-view-edit/station-create-view-edit.component";
+import {LinesHomeComponent} from "./lines/lines-home/lines-home.component";
+import {LinesCreateViewEditComponent} from "./lines/lines-create-view-edit/lines-create-view-edit.component";
+import {ConnectionsHomeComponent} from "./connections/connections-home/connections-home.component";
+import {
+  ConnectionsCreateViewEditComponent
+} from "./connections/connections-create-view-edit/connections-create-view-edit.component";
 
 
 export const adminRoutes: Route[] = [
@@ -84,6 +90,46 @@ export const adminRoutes: Route[] = [
   {
     path: "admin/stations/view/:id",
     component: StationCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/lines",
+    component: LinesHomeComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/lines/create",
+    component: LinesCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/lines/edit/:id",
+    component: LinesCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/lines/view/:id",
+    component: LinesCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/connections",
+    component: ConnectionsHomeComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/connections/create",
+    component: ConnectionsCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/connections/edit/:id",
+    component: ConnectionsCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/connections/view/:id",
+    component: ConnectionsCreateViewEditComponent,
     canActivate: [AuthGuard]
   }
 ];

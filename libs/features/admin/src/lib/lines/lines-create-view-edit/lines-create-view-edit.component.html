@@ -1,0 +1,41 @@
+<div class="flex flex-row m-10 px-5">
+  <h3 *ngIf="!isView" class="text-2xl font-semibold"><fa-icon class="fas fa-user-plus"></fa-icon>&nbsp; Tworzenie/Edycja linii</h3>
+  <h3 *ngIf="isView" class="text-2xl font-semibold"><fa-icon class="fas fa-user"></fa-icon>&nbsp; Podgląd linii</h3>
+  <button [routerLink]="['/admin/lines']" type="button" class="ml-auto focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"><fa-icon class="fas fa-arrow-left"></fa-icon> Wstecz</button>
+</div>
+<div class="flex flex-row bg-white m-10 p-10 rounded-2xl">
+  <form #formRef="ngForm" (submit)="submit()" class="flex flex-col w-full">
+
+    <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">
+      <input [(ngModel)]="line.name" [disabled]="isView" type="text" name="name" id="name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+      <label for="name" class="absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:font-medium peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nazwa</label>
+    </div>
+    <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">
+      <input [(ngModel)]="line.symbol" [disabled]="isView" type="text" name="symbol" id="symbol" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+      <label for="symbol" class="absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:font-medium peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Symbol</label>
+    </div>
+    <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">
+      <input [(ngModel)]="line.distance" [disabled]="isView" type="text" name="distance" id="distance" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+      <label for="distance" class="absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:font-medium peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Odległość</label>
+    </div>
+    <div class="flex flex-row">
+      <div class="relative z-10 w-1/2 mb-6 group mr-3">
+        <select (change)="setStationsForRightEdge()" [(ngModel)]="line.leftEdgeStationId" [disabled]="isView" name="leftEdgeStations" id="leftEdgeStations" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+          <option [ngValue]="undefined" selected disabled>Wybierz stację początkową</option>
+          <option *ngFor="let leftStation of leftEdgeStations" [ngValue]="leftStation.id">{{leftStation.name}}</option>
+        </select>
+        <label for="leftEdgeStations" class="absolute peer-focus:font-medium text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 left-0 top-3 bg-white mx-2 z-50 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Typ stacji</label>
+      </div>
+      <div class="relative z-10 w-1/2 mb-6 group ml-3">
+        <select [(ngModel)]="line.rightEdgeStationId" [disabled]="isView || rightDisabled" name="rightEdgeStation" id="rightEdgeStation" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+          <option [ngValue]="undefined" selected disabled>Wybierz stację końcową</option>
+          <option *ngFor="let rightStation of rightEdgeStations" [ngValue]="rightStation.id">{{rightStation.name}}</option>
+        </select>
+        <label for="rightEdgeStation" class="absolute peer-focus:font-medium text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 left-0 top-3 bg-white mx-2 z-50 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Typ stacji</label>
+      </div>
+    </div>
+
+
+    <button  type="submit"  [disabled]="!formRef.valid" *ngIf="!isView" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>
+  </form>
+</div>

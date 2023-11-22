@@ -34,14 +34,24 @@ export class HomeComponent implements OnInit{
         ]
       },
       {
-        label: 'Administracja stacji',
+        label: 'Administracja architektury',
         items: [
           {
             label: 'Zarządzanie stacjami',
             icon: 'fas fa-random',
             command: () => this.navigate("/admin/stations")
+          },
+          {
+            label: 'Zarządzanie liniami',
+            icon: 'fas fa-grip-lines',
+            command: () => this.navigate("/admin/lines")
+          },
+          {
+            label: 'Zarządzanie połączeniami',
+            icon: 'fa-brands fa-connectdevelop',
+            command: () => this.navigate("/admin/connections")
           }
-        ]
+        ],
       },
       {
         label: 'Administracja',
