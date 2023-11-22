@@ -65,6 +65,11 @@ export class HomeComponent implements OnInit{
             label: 'Zarządzanie przewoźnikami',
             icon: 'fas fa-arrow-right-arrow-left',
             command: () => this.navigate("/admin/transport-companies")
+          },
+          {
+            label: 'Zarządzanie typami pociągów',
+            icon: 'fa-brands fa-squarespace',
+            command: () => this.navigate("/admin/train-types")
           }
         ]
       }

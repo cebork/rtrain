@@ -18,6 +18,10 @@ import {ConnectionsHomeComponent} from "./connections/connections-home/connectio
 import {
   ConnectionsCreateViewEditComponent
 } from "./connections/connections-create-view-edit/connections-create-view-edit.component";
+import {TrainTypesHomeComponent} from "./train-types/train-types-home/train-types-home.component";
+import {
+  TrainTypesCreateViewEditComponent
+} from "./train-types/train-types-create-view-edit/train-types-create-view-edit.component";
 
 
 export const adminRoutes: Route[] = [
@@ -130,6 +134,26 @@ export const adminRoutes: Route[] = [
   {
     path: "admin/connections/view/:id",
     component: ConnectionsCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/train-types",
+    component: TrainTypesHomeComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/train-types/create",
+    component: TrainTypesCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/train-types/edit/:id",
+    component: TrainTypesCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/train-types/view/:id",
+    component: TrainTypesCreateViewEditComponent,
     canActivate: [AuthGuard]
   }
 ];

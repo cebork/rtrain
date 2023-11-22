@@ -12,6 +12,7 @@ import {
   LocalRouteService,
   RoleService,
   StationService,
+  TrainTypeService,
   TransportCompanyService,
   UserService,
 } from '@rtrain/api';
@@ -29,6 +30,8 @@ import { LinesHomeComponent } from './lines/lines-home/lines-home.component';
 import { LinesCreateViewEditComponent } from './lines/lines-create-view-edit/lines-create-view-edit.component';
 import { ConnectionsCreateViewEditComponent } from './connections/connections-create-view-edit/connections-create-view-edit.component';
 import { ConnectionsHomeComponent } from './connections/connections-home/connections-home.component';
+import { TrainTypesHomeComponent } from './train-types/train-types-home/train-types-home.component';
+import { TrainTypesCreateViewEditComponent } from './train-types/train-types-create-view-edit/train-types-create-view-edit.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -55,6 +58,8 @@ import { ConnectionsHomeComponent } from './connections/connections-home/connect
     LinesCreateViewEditComponent,
     ConnectionsCreateViewEditComponent,
     ConnectionsHomeComponent,
+    TrainTypesHomeComponent,
+    TrainTypesCreateViewEditComponent,
   ],
   providers: [
     UserService,
@@ -62,7 +67,8 @@ import { ConnectionsHomeComponent } from './connections/connections-home/connect
     RoleService,
     StationService,
     LineService,
-    LocalRouteService
+    LocalRouteService,
+    TrainTypeService,
   ],
 })
 export class FeaturesAdminModule {}
