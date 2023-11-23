@@ -72,6 +72,16 @@ export class HomeComponent implements OnInit{
             command: () => this.navigate("/admin/train-types")
           }
         ]
+      },
+      {
+        label: 'Administracja incydentami',
+        items: [
+          {
+            label: 'Zarządzanie kodami incydentów',
+            icon: 'fa fa-book',
+            command: () => this.navigate("/admin/incident-codes")
+          }
+        ]
       }
     ];
   }

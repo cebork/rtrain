@@ -18,20 +18,26 @@ export class NavbarComponent implements OnInit {
 
   menuItems = [
     {
-      label: "Test 1",
-      icon: "pi pi-fw pi-book",
+      label: "Rozkłady jazdy",
+      icon: "pi pi-fw pi-palette",
       routerLink: "/",
       disabled: false
     },
     {
-      label: "Test 2",
-      icon: "pi pi-fw pi-file",
+      label: "Wykresy ruchu",
+      icon: "pi pi-fw pi-chart-line",
       routerLink: "/pd",
       disabled: true
     },
     {
-      label: "Test 3",
-      icon: "pi pi-fw pi-chart-line",
+      label: "Incydenty",
+      icon: "pi pi-fw fa-solid fa-bolt",
+      routerLink: "/risk",
+      disabled: true
+    },
+    {
+      label: "Stacja",
+      icon: "pi pi-fw fa-solid fa-warehouse",
       routerLink: "/risk",
       disabled: true
     }

@@ -1,7 +1,6 @@
 import { Route } from "@angular/router";
 import {HomeComponent} from "./home/home.component";
 import {AuthGuard} from "@rtrain/shell/auth";
-import {TrainsComponent} from "./trains/trains.component";
 import {UsersHomeComponent} from "./users/users-home/users-home.component";
 import {UserCreateViewEditComponent} from "./users/user-create-view-edit/user-create-view-edit.component";
 import {
@@ -22,6 +21,12 @@ import {TrainTypesHomeComponent} from "./train-types/train-types-home/train-type
 import {
   TrainTypesCreateViewEditComponent
 } from "./train-types/train-types-create-view-edit/train-types-create-view-edit.component";
+import {IncidentCodesHomeComponent} from "./incident-codes/incident-codes-home/incident-codes-home.component";
+import {
+  IncidentCodesCreateViewEditComponent
+} from "./incident-codes/incident-codes-create-view-edit/incident-codes-create-view-edit.component";
+import {TrainsHomeComponent} from "./trains/trains-home/trains-home.component";
+import {TrainsCreateViewEditComponent} from "./trains/trains-create-view-edit/trains-create-view-edit.component";
 
 
 export const adminRoutes: Route[] = [
@@ -30,11 +35,6 @@ export const adminRoutes: Route[] = [
     component: HomeComponent,
     canActivate: [AuthGuard]
 
-  },
-  {
-    path: "admin/trains",
-    component: TrainsComponent,
-    canActivate: [AuthGuard]
   },
   {
     path: "admin/users",
@@ -154,6 +154,46 @@ export const adminRoutes: Route[] = [
   {
     path: "admin/train-types/view/:id",
     component: TrainTypesCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/incident-codes",
+    component: IncidentCodesHomeComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/incident-codes/create",
+    component: IncidentCodesCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/incident-codes/edit/:id",
+    component: IncidentCodesCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/incident-codes/view/:id",
+    component: IncidentCodesCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/trains",
+    component: TrainsHomeComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/trains/create",
+    component: TrainsCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/trains/edit/:id",
+    component: TrainsCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/trains/view/:id",
+    component: TrainsCreateViewEditComponent,
     canActivate: [AuthGuard]
   }
 ];

@@ -1,31 +1,43 @@
 import {scheduled} from "rxjs";
+import {ITransportCompanyModel} from "../transportCompanyModels/transport-company.model";
+import {ITrainTypeModel} from "../trainTypeModels/train-type.model";
+import {active} from "d3";
 
 export interface ITrainModel {
-  id: string
-  code: string
-  name: string
-  wagonNumber: number
-  transportCompany: string
-  scheduled: boolean
-  removed: boolean
+  id?: string
+  active?: boolean
+  code?: string
+  name?: string
+  wagonNumber?: number
+  transportCompanyId?: string
+  transportCompany?: ITransportCompanyModel;
+  trainTypeId?: string;
+  trainType?: ITrainTypeModel;
+  scheduled?: boolean
 }
 
 export class TrainModel implements ITrainModel{
-  id: string;
-  code: string;
-  name: string;
-  removed: boolean;
-  scheduled: boolean;
-  transportCompany: string;
-  wagonNumber: number;
+  id?: string
+  active?: boolean
+  code?: string
+  name?: string
+  wagonNumber?: number
+  transportCompanyId?: string
+  transportCompany?: ITransportCompanyModel;
+  trainType?: ITrainTypeModel;
+  scheduled?: boolean
 
-  constructor(id: string, code: string, name: string, removed: boolean, scheduled: boolean, transportCompany: string, wagonNumber: number) {
+
+  constructor(id?: string, active?: boolean, code?: string, name?: string, wagonNumber?: number, transportCompanyId?: string,
+              transportCompany?: ITransportCompanyModel, trainType?: ITrainTypeModel, scheduled?: boolean) {
     this.id = id;
+    this.active = active;
     this.code = code;
     this.name = name;
-    this.removed = removed;
-    this.scheduled = scheduled;
-    this.transportCompany = transportCompany;
     this.wagonNumber = wagonNumber;
+    this.transportCompanyId = transportCompanyId;
+    this.transportCompany = transportCompany;
+    this.trainType = trainType;
+    this.scheduled = scheduled;
   }
 }

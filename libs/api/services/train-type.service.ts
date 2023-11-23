@@ -34,4 +34,8 @@ export class TrainTypeService {
   delete(userId: string): Observable<HttpResponse<ITrainTypeModel>> {
     return this.http.delete(`${this.baseURL}/Delete/${userId}`, {observe: 'response', responseType: "json"})
   }
+
+  getAllForTrain(): Observable<HttpResponse<ITrainTypeModel[]>> {
+    return this.http.get<ITrainTypeModel[]>(`${this.baseURL}/GetAllForTrain`, {observe: 'response', responseType: 'json'})
+  }
 }
