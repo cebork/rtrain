@@ -13,12 +13,13 @@ import { StoreRouterConnectingModule } from "@ngrx/router-store";
 import { FeaturesAdminModule } from "@rtrain/features/admin";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import {UtilModule} from "@rtrain/util";
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
+    RouterModule.forRoot(appRoutes, {initialNavigation: 'enabledBlocking'}),
     UiLayoutModule,
     ShellAuthModule,
     StoreModule.forRoot([]),
@@ -27,7 +28,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     StoreRouterConnectingModule,
     FeaturesAdminModule,
     BrowserAnimationsModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    UtilModule
   ],
   providers: [],
   bootstrap: [AppComponent],

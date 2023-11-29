@@ -1,8 +1,9 @@
 import {Injectable} from "@angular/core";
 import {apiAddress} from "../env-variable";
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {AccountModel, IAccountModel, ILoginModel, JWTToken} from "../../domain/models";
+import {AccountModel, IAccountModel, ILineModel, ILoginModel, JWTToken} from "../../domain/models";
 import {BehaviorSubject, catchError, map, Observable, tap, throwError} from "rxjs";
+import {IActivateAccountModel} from "../../domain/models/accountModels/activateAccount.model";
 
 
 @Injectable()
@@ -49,4 +50,9 @@ export class AccountService {
     sessionStorage.removeItem("authToken");
     this.accountSubject$.next(null);
   }
+
+  activateAccount(activateAccountModel: IActivateAccountModel): Observable<HttpResponse<boolean>>{
+    return this.http.patch<boolean>(`${this.baseURL}`, activateAccountModel, {observe: "response", responseType: "json"})
+  }
+
 }
