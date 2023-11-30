@@ -48,7 +48,7 @@ import { TrainsCreateViewEditComponent } from './trains/trains-create-view-edit/
     FormsModule,
     DropdownModule,
   ],
-  exports: [RouterModule],
+  exports: [RouterModule, LinesHomeComponent],
   declarations: [
     HomeComponent,
     UsersHomeComponent,

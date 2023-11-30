@@ -14,6 +14,8 @@ import { FeaturesAdminModule } from "@rtrain/features/admin";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {UtilModule} from "@rtrain/util";
+import {FeaturesTrainScheduleModule} from "@rtrain/features/train-schedule";
+import {TabMenuModule} from "primeng/tabmenu";
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
@@ -29,7 +31,8 @@ import {UtilModule} from "@rtrain/util";
     FeaturesAdminModule,
     BrowserAnimationsModule,
     FontAwesomeModule,
-    UtilModule
+    FeaturesTrainScheduleModule,
+    TabMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent],

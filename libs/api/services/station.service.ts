@@ -9,7 +9,8 @@ import {ILocalizationModel, IStationModel} from "../../domain/models";
 export class StationService {
   private baseURL = `${apiAddress}/api/station`
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   getAll(page: number, size: number, sortField: string, sortOrder: string, globalFilter: string): Observable<HttpResponse<IGenericGetAllModelModel<IStationModel>>> {
     const params = new HttpParams()
@@ -17,10 +18,14 @@ export class StationService {
       .set('size', size.toString())
       .set('sort', sortField + ',' + sortOrder)
       .set('globalFilter', globalFilter);
-    return this.http.get<IGenericGetAllModelModel<IStationModel>>(this.baseURL + '/GetAll', { params, observe: "response", responseType: "json" });
+    return this.http.get<IGenericGetAllModelModel<IStationModel>>(this.baseURL + '/GetAll', {
+      params,
+      observe: "response",
+      responseType: "json"
+    });
   }
 
-  getById(id: string): Observable<HttpResponse<IStationModel>>{
+  getById(id: string): Observable<HttpResponse<IStationModel>> {
     return this.http.get(`${this.baseURL}/${id}`, {observe: "response", responseType: "json"})
   }
 
@@ -36,12 +41,24 @@ export class StationService {
     return this.http.delete(`${this.baseURL}/Delete/${userId}`, {observe: 'response', responseType: "json"})
   }
 
-  getAllForLines() : Observable<HttpResponse<IStationModel[]>> {
-    return this.http.get<IStationModel[]>(`${this.baseURL}/getAllForLines`, {observe: "response", responseType: "json"});
+  getAllForLines(): Observable<HttpResponse<IStationModel[]>> {
+    return this.http.get<IStationModel[]>(`${this.baseURL}/getAllForLines`, {
+      observe: "response",
+      responseType: "json"
+    });
   }
 
-  getAllForConnections() : Observable<HttpResponse<IStationModel[]>> {
-    return this.http.get<IStationModel[]>(`${this.baseURL}/getAllForConnections`, {observe: "response", responseType: "json"});
+  getAllForConnections(): Observable<HttpResponse<IStationModel[]>> {
+    return this.http.get<IStationModel[]>(`${this.baseURL}/getAllForConnections`, {
+      observe: "response",
+      responseType: "json"
+    });
   }
 
+  getAllStationsForGivenLine(lineId: string): Observable<HttpResponse<IStationModel[]>> {
+    return this.http.get<IStationModel[]>(`${this.baseURL}/getAllStationsForGivenLine/${lineId}`, {
+      observe: "response",
+      responseType: "json"
+    });
+  }
 }

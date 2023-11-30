@@ -1,0 +1,146 @@
+<div class="flex flex-col">
+  <div class="flex flex-row items-center m-10 px-5">
+    <h3 class="text-2xl font-semibold"><fa-icon class="fas fa-grip-lines"></fa-icon>&nbsp; Przenoszenie pociągów</h3>
+    <div class=" ml-auto">
+      <button [routerLink]="['/train-schedule']" type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"><fa-icon class="fas fa-arrow-left"></fa-icon> Wstecz</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-10">
+    <div class="card bg-white overflow-hidden shadow rounded-lg align-self-start">
+<!--      <p-table #dt1 [value]="avaliableTrains" [lazy]="true" (onLazyLoad)="loadTrains($event)"-->
+<!--               [paginator]="true" [rows]="10" [totalRecords]="totalRecords"-->
+<!--               [loading]="loading" [sortField]="defaultSortField" [sortOrder]="defaultSortOrder">-->
+      <p-table #dt1 [value]="avaliableTrains"(onLazyLoad)="loadTrains($event)"
+               [totalRecords]="totalRecords">
+        <ng-template pTemplate="caption">
+          <div class="flex justify-center text-xl">
+            Dostępne pociągi
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="code" style="min-width:5rem">
+              <div class="flex items-center justify-start">
+                <p>Kod</p>
+<!--                <p-sortIcon field="code"></p-sortIcon>-->
+              </div>
+
+            </th>
+            <th pSortableColumn="symbol" style="min-width:5rem">
+              <div class="flex items-center justify-start">
+                <p>Nazwa</p>
+<!--                <p-sortIcon field="name"></p-sortIcon>-->
+              </div>
+            </th>
+            <th style="min-width:5rem">
+              <div class="flex justify-content-center align-items-center"></div>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-train>
+          <tr>
+            <td class="whitespace-normal max-w-md">
+              {{train.code}}
+            </td>
+            <td  class="whitespace-normal max-w-md">
+              {{train.name}}
+            </td>
+            <td>
+              <button (click)="showDialog(train)" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-arrow-right"></i></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">No trains found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <div class="card bg-white overflow-hidden shadow rounded-lg align-self-start">
+<!--      <p-table #dt2 [value]="trainsForSchedule" [lazy]="true" (onLazyLoad)="loadTrains($event)"-->
+<!--               [paginator]="true" [rows]="10" [totalRecords]="totalRecords"-->
+<!--               [loading]="loading" [sortField]="defaultSortField" [sortOrder]="defaultSortOrder">-->
+        <p-table #dt2 [value]="trainsForSchedule" (onLazyLoad)="loadTrains($event)" [totalRecords]="totalRecords">
+        <ng-template pTemplate="caption">
+        <div class="flex justify-center text-xl">
+          Pociągi przekazane do rozkładu jazdy
+        </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="min-width:5rem">
+              <div class="flex justify-content-center align-items-center"></div>
+            </th>
+
+            <th pSortableColumn="code" style="min-width:5rem">
+              <div class="flex items-center justify-start">
+                <p>Kod</p>
+<!--                <p-sortIcon field="code"></p-sortIcon>-->
+              </div>
+
+            </th>
+            <th pSortableColumn="symbol" style="min-width:5rem">
+              <div class="flex items-center justify-start">
+                <p>Nazwa</p>
+<!--                <p-sortIcon field="name"></p-sortIcon>-->
+              </div>
+            </th>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-trainForSchedule>
+          <tr>
+            <td>
+              <button (click)="submitBack(trainForSchedule)" *ngIf="!trainForSchedule.train.scheduled" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-arrow-left"></i></button>
+            </td>
+            <td class="whitespace-normal max-w-md">
+              {{trainForSchedule.train?.code}}
+            </td>
+            <td  class="whitespace-normal max-w-md">
+              {{trainForSchedule.train?.name}}
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">No trains found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <div class="flex flex-row items-center m-10 px-5">
+    <div class=" ml-auto">
+      <button (click)="submit()" type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><i class="fa-solid fa-check"></i> Zatwierdź</button>
+    </div>
+  </div>
+</div>
+
+<p-dialog header="Przenoszenie pociągu" [(visible)]="visible" [style]="{width: '50vw'}">
+  <form #formRef="ngForm" (submit)="submitMove()" class="flex flex-col w-full">
+    <div class="relative z-10 w-full mb-6 group mt-4">
+      <select [(ngModel)]="trainForSchedule.fromStation" name="station_1" id="station_1" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+        <option [ngValue]="undefined" selected disabled>Wybierz stacje</option>
+        <option *ngFor="let stationModel of stations" [ngValue]="stationModel" [disabled]="stationModel.id === trainForSchedule.toStation?.id">{{stationModel.name}}</option>
+      </select>
+      <label for="station_1" class="absolute peer-focus:font-medium text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 left-0 top-3 bg-white mx-2 z-50 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Stacja początkowa</label>
+    </div>
+    <div class="relative z-10 w-full mb-6 group">
+      <select [(ngModel)]="trainForSchedule.toStation" [disabled]="!trainForSchedule.fromStation" name="station_2" id="station_2" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+        <option [ngValue]="undefined" selected disabled>Wybierz stacje</option>
+        <option *ngFor="let stationModel of stations" [ngValue]="stationModel" [disabled]="stationModel.id === trainForSchedule.fromStation?.id">{{stationModel.name}}</option>
+      </select>
+      <label for="station_2" class="absolute peer-focus:font-medium text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 left-0 top-3 bg-white mx-2 z-50 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Stacja końcowa</label>
+    </div>
+    <div class="relative z-10 w-full mb-6 group">
+      <input [(ngModel)]="trainForSchedule.isOnce" id="isOnce" name="isOnce" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+      <label for="isOnce" class="ms-2 text-sm font-medium text-gray-900">Czy jednorazowy przejazd?</label>
+    </div>
+    <button [disabled]="!formRef.valid" type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><i class="fa-solid fa-check"></i> Przenieś</button>
+  </form>
+</p-dialog>
+

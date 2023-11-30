@@ -1,0 +1,7 @@
+.align-self-start {
+  align-self: start;
+}
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

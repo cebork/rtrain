@@ -20,7 +20,7 @@ export class NavbarComponent implements OnInit {
     {
       label: "Rozkłady jazdy",
       icon: "pi pi-fw pi-palette",
-      routerLink: "/",
+      routerLink: "/train-schedule",
       disabled: false
     },
     {
