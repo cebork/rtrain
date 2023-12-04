@@ -1,0 +1,79 @@
+<div class="flex flex-col">
+  <div class="flex flex-row items-center m-10 px-5">
+    <h3 class="text-2xl font-semibold"><fa-icon class="fas fa-train"></fa-icon>&nbsp; Pociągi dla linii [ {{line?.name}} ]</h3>
+    <div class=" ml-auto">
+      <button [routerLink]="['/train-schedule']" type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"><fa-icon class="fas fa-arrow-left"></fa-icon> Wstecz</button>
+    </div>
+  </div>
+  <div class="flex flex-row m-auto">
+    <div class="card max-w-screen-xl">
+
+      <p-table #dt1 [value]="trainForScheduleModels" [lazy]="true" (onLazyLoad)="loadTrainsForSchedule($event)"
+               [paginator]="true" [rows]="10" [totalRecords]="totalRecords"
+               [loading]="loading" [sortField]="defaultSortField" [sortOrder]="defaultSortOrder">
+        <ng-template pTemplate="caption">
+          <div class="flex">
+            <button type="button"  (click)="clear(dt1, filterInput)" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+              <i class="pi pi-filter-slash"></i> Wyczyść filtry
+            </button>
+            <span class="flex items-center ml-auto">
+              <i class="pi pi-search"></i>
+              <input #filterInput type="text" (input)="filter($event.target, dt1)" placeholder="Wyszukaj" class="pl-2"/>
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="train.code" style="min-width:20rem">
+              <div class="flex items-center justify-start">
+                <p>Kod</p>
+                <p-sortIcon field="train.code"></p-sortIcon>
+              </div>
+
+            </th>
+            <th pSortableColumn="train.name" style="min-width:30rem">
+              <div class="flex items-center justify-start">
+                <p>Nazwa</p>
+                <p-sortIcon field="train.name"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="train.scheduled" style="min-width:10rem">
+              <div class="flex items-center justify-start">
+                <p>Czy w rozkładzie jazdy?</p>
+                <p-sortIcon field="train.scheduled"></p-sortIcon>
+              </div>
+            </th>
+            <th style="min-width:20rem">
+              <div class="flex justify-content-center align-items-center">
+                Akcje
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-trainForSchedule>
+          <tr>
+            <td class="whitespace-normal max-w-md">
+              {{trainForSchedule.train.code}}
+            </td>
+            <td  class="whitespace-normal max-w-md">
+              {{trainForSchedule.train.name}}
+            </td>
+            <td>
+              <p-badge  [value]="trainForSchedule.train.scheduled ? 'Tak' : 'Nie'" [severity]="trainForSchedule.train.scheduled ? 'success' : 'danger'"></p-badge>
+
+            </td>
+            <td>
+              <button [routerLink]="['/train-schedule/creation/' + lineId + '/' + trainForSchedule.id]" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Przejdź do</button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">No trains found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+

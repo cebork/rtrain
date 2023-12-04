@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {ILineModel, IStationModel, ITrainModel, TrainModel} from "@rtrain/domain/models";
+import {IStationModel, ITrainModel, TrainModel} from "@rtrain/domain/models";
 import {Table} from "primeng/table";
-import {LineService, StationService, TrainForScheduleService, TrainService, TransportCompanyService} from "@rtrain/api";
+import {StationService, TrainForScheduleService, TrainService} from "@rtrain/api";
 import {MessageService} from "primeng/api";
 import {ActivatedRoute} from "@angular/router";
 import {
   ITrainForScheduleModel,
   TrainForScheduleModel
-} from "../../../../../domain/models/train-schedule/train-for-schedule.model";
+} from "@rtrain/domain/models";
 
 
 @Component({
@@ -52,7 +52,6 @@ export class TrainPassingViewComponent implements OnInit {
   }
 
   loadStationsForLine(){
-
     if (this.lineId) this.stationService.getAllStationsForGivenLine(this.lineId).subscribe({
       next: (res) => {
         if (res && res.body) this.stations = res.body
@@ -60,13 +59,11 @@ export class TrainPassingViewComponent implements OnInit {
       error: (error) => {
         console.error(error)
       },
-      complete: () => {
-        this.loadTrainsForSchedule();
-      }
+
     })
   }
 
-  loadTrainsForSchedule(){
+  loadTrainsForSchedule(trains: ITrainModel[]){
     this.trainForScheduleService.getAllByLine(this.lineId).subscribe({
       next: (res) => {
         if (res.body) this.trainsForSchedule = res.body
@@ -75,27 +72,31 @@ export class TrainPassingViewComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Błąd', detail: error.message });
         console.error(error)
       },
-      complete: () => this.equalizeLists()
+      complete: () => this.equalizeLists(trains)
     })
   }
 
   loadTrains(event?: any) {
     this.loading = true;
+    let trains: ITrainModel[] = []
     this.trainService.getTrainsForCurrentUserTransportCompany().subscribe(
       response => {
         if (response.body) {
-          this.avaliableTrains = response.body.data;
+          trains = response.body.data;
           this.totalRecords = response.body.totalRecords;
         }
         this.loading = false;
       },
       error => {
         this.loading = false;
+      },
+      () => {
+        this.loadTrainsForSchedule(trains);
       }
     );
   }
-  equalizeLists(){
-    this.avaliableTrains = this.avaliableTrains.filter(avaTrain => !this.trainsForSchedule.some(tFS => tFS.train?.id === avaTrain.id))
+  equalizeLists(trains: ITrainModel[]){
+    this.avaliableTrains = trains.filter(avaTrain => !this.trainsForSchedule.some(tFS => tFS.train?.id === avaTrain.id))
   }
   clear(table: Table, filterInput: any) {
     filterInput.value = ''

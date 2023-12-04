@@ -1,0 +1,11 @@
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+.custom-calendar .p-inputtext {
+  height: 100%;
+}
+
+.custom-calendar .p-calendar {
+  padding: 0;
+}

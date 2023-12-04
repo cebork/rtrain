@@ -18,7 +18,8 @@
         "assets": ["apps/rtrain/src/favicon.ico", "apps/rtrain/src/assets"],
         "styles": [
           "apps/rtrain/src/styles.scss",
-          "node_modules/@fortawesome/fontawesome-free/css/all.css"
+          "node_modules/@fortawesome/fontawesome-free/css/all.css",
+
         ],
         "scripts": []
       },

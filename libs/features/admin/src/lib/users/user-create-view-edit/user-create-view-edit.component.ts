@@ -129,7 +129,6 @@ export class UserCreateViewEditComponent implements OnInit {
     } else {
       if (this.user && this.user.roles) this.user.roles.push(role)
     }
-    console.log(this.user.roles)
   }
 
   removeItem(itemToRemove: IRoleModel, list: IRoleModel[]) {

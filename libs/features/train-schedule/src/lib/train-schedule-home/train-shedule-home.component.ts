@@ -3,6 +3,7 @@ import {ILineModel} from "@rtrain/domain/models";
 import {Table} from "primeng/table";
 import {LineService, StationService, TransportCompanyService} from "@rtrain/api";
 import {MessageService} from "primeng/api";
+import {RoleConstant} from "@rtrain/util";
 
 
 @Component({
@@ -22,6 +23,9 @@ export class TrainSheduleHomeComponent implements OnInit {
   sortField = 'id';
   sortOrder = 'asc';
   globalFilter = '';
+
+  trainScheduleRoles = [RoleConstant.TrainScheduleDispatcher]
+  transportCompanyRoles = [RoleConstant.TransportCompanyWorker]
 
   constructor(
     private lineService: LineService,
@@ -78,4 +82,5 @@ export class TrainSheduleHomeComponent implements OnInit {
       }
     })
   }
+
 }

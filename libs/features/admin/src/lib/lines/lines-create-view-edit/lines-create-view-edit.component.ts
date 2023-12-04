@@ -103,7 +103,6 @@ export class LinesCreateViewEditComponent implements OnInit {
   }
 
   submit(){
-    console.log(this.line)
     const url = this.router.url
     if (url.includes('create')) this.save();
     else this.update();

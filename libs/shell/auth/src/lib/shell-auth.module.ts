@@ -5,7 +5,7 @@ import { authRoutes } from './auth.routes';
 import { RouterModule } from '@angular/router';
 import { LoginFormComponent } from './components/login-form/login-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AccountService } from '@rtrain/api';
+import {AccessService, AccountService} from '@rtrain/api';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import {
@@ -40,6 +40,7 @@ import { CreatePasswordComponent } from './containers/create-password/create-pas
     AccountService,
     AuthEffects,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    AccessService
   ],
 })
 export class ShellAuthModule {}

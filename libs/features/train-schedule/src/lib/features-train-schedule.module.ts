@@ -8,11 +8,14 @@ import { FeaturesAdminModule } from '@rtrain/features/admin';
 import { TableModule } from 'primeng/table';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TrainPassingViewComponent } from './train-passing-view/train-passing-view.component';
-import {BadgeModule} from "primeng/badge";
-import {DialogModule} from "primeng/dialog";
-import {FormsModule} from "@angular/forms";
-import {PaginatorModule} from "primeng/paginator";
-import {TrainForScheduleService} from "@rtrain/api";
+import { BadgeModule } from 'primeng/badge';
+import { DialogModule } from 'primeng/dialog';
+import { FormsModule } from '@angular/forms';
+import { PaginatorModule } from 'primeng/paginator';
+import {TrainForScheduleService, TrainScheduleService} from '@rtrain/api';
+import { TrainScheduleCreationViewComponent } from './train-schedule-creation-view/train-schedule-creation-view.component';
+import { TrainScheduleCreationComponent } from './train-schedule-creation/train-schedule-creation.component';
+import {CalendarModule} from "primeng/calendar";
 
 @NgModule({
   imports: [
@@ -26,8 +29,14 @@ import {TrainForScheduleService} from "@rtrain/api";
     DialogModule,
     FormsModule,
     PaginatorModule,
+    CalendarModule,
   ],
-  declarations: [TrainSheduleHomeComponent, TrainPassingViewComponent],
-  providers: [TrainForScheduleService]
+  declarations: [
+    TrainSheduleHomeComponent,
+    TrainPassingViewComponent,
+    TrainScheduleCreationViewComponent,
+    TrainScheduleCreationComponent,
+  ],
+  providers: [TrainForScheduleService, TrainScheduleService],
 })
 export class FeaturesTrainScheduleModule {}

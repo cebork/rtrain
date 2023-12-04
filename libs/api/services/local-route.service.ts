@@ -44,4 +44,14 @@ export class LocalRouteService {
     return this.http.get<ILocalRouteModel[]>(`${this.baseURL}/GetAllForLine/${lineId}`, {observe: "response", responseType: "json"})
   }
 
+  getAllForLineTrainSchedule(lineId:string, page: number, size: number, sortField: string, sortOrder: string, globalFilter: string): Observable<HttpResponse<IGenericGetAllModelModel<ILocalRouteModel>>> {
+    const params = new HttpParams()
+      .set('lineId', lineId)
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', sortField + ',' + sortOrder)
+      .set('globalFilter', globalFilter);
+    return this.http.get<IGenericGetAllModelModel<ILocalRouteModel>>(this.baseURL + '/GetAllForLineTrainSchedule', { params, observe: "response", responseType: "json" });
+  }
+
 }

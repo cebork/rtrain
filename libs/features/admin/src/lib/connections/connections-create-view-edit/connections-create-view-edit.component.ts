@@ -96,6 +96,7 @@ export class ConnectionsCreateViewEditComponent implements OnInit{
   }
 
   submit() {
+    this.setDefaultIfEmpty()
     this.localRouteService.saveFromList(this.localRoutes, this.line.id!).subscribe({
       next: (data) => {
         this.messageService.add({ severity: 'success', summary: 'Sukces', detail: 'Pomyslnie dodano połączenia' });
@@ -108,6 +109,20 @@ export class ConnectionsCreateViewEditComponent implements OnInit{
     });
   }
 
+
+  setDefaultIfEmpty(){
+    if (this.localRoutes.length === 0) {
+      const localRoute = new LocalRouteModel();
+      localRoute.oneWay = false;
+      localRoute.fromStationId = this.line.leftEdgeStationId;
+      localRoute.toStationId = this.line.rightEdgeStationId;
+      localRoute.order = 1;
+      localRoute.lineId = this.line.id;
+      localRoute.routeProblem = false;
+      localRoute.distance = this.line.distance;
+      this.localRoutes.push(localRoute);
+    }
+  }
 
   updateIndexesBelow(index: number, type: 'add' | 'remove'){
     if (type === 'add'){

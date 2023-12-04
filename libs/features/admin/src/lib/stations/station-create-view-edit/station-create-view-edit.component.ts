@@ -73,7 +73,6 @@ export class StationCreateViewEditComponent implements OnInit {
   }
 
   submit(){
-    console.log(this.station)
     const url = this.router.url
     if (url.includes('create')) this.save();
     else this.update();
