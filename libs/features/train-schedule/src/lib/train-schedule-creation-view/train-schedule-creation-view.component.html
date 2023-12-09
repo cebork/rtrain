@@ -37,7 +37,20 @@
                 <p-sortIcon field="train.name"></p-sortIcon>
               </div>
             </th>
-            <th pSortableColumn="train.scheduled" style="min-width:10rem">
+            <th pSortableColumn="fromStation.name" style="min-width:15rem">
+              <div class="flex items-center justify-start">
+                <p>Ze stacji</p>
+                <p-sortIcon field="fromStation.name"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="toStation.name" style="min-width:15rem">
+              <div class="flex items-center justify-start">
+                <p>Do stacji</p>
+                <p-sortIcon field="toStation.name"></p-sortIcon>
+              </div>
+            </th>
+
+            <th pSortableColumn="train.scheduled" style="min-width:5rem">
               <div class="flex items-center justify-start">
                 <p>Czy w rozkładzie jazdy?</p>
                 <p-sortIcon field="train.scheduled"></p-sortIcon>
@@ -58,8 +71,14 @@
             <td  class="whitespace-normal max-w-md">
               {{trainForSchedule.train.name}}
             </td>
+            <td class="whitespace-normal max-w-md">
+              {{trainForSchedule.fromStation.name}}
+            </td>
+            <td  class="whitespace-normal max-w-md">
+              {{trainForSchedule.toStation.name}}
+            </td>
             <td>
-              <p-badge  [value]="trainForSchedule.train.scheduled ? 'Tak' : 'Nie'" [severity]="trainForSchedule.train.scheduled ? 'success' : 'danger'"></p-badge>
+              <p-badge  [value]="trainForSchedule.scheduled ? 'Tak' : 'Nie'" [severity]="trainForSchedule.scheduled ? 'success' : 'danger'"></p-badge>
 
             </td>
             <td>

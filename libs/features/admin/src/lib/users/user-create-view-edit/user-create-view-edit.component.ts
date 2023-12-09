@@ -1,12 +1,13 @@
 import {Component, OnInit, ViewChild, ViewRef} from '@angular/core';
-import {IUserModel, UserModel} from "@rtrain/domain/models";
+import {IStationModel, IUserModel, UserModel} from "@rtrain/domain/models";
 import {ActivatedRoute, Router} from "@angular/router";
-import {RoleService, TransportCompanyService, UserService} from "@rtrain/api";
+import {RoleService, StationService, TransportCompanyService, UserService} from "@rtrain/api";
 import {ITransportCompanyModel} from "@rtrain/domain/models";
 import {NgForm} from "@angular/forms";
 import {MessageService} from "primeng/api";
 import {IRoleModel} from "@rtrain/domain/models";
 import {HttpErrorResponse, HttpStatusCode} from "@angular/common/http";
+import {data} from "autoprefixer";
 
 @Component({
   selector: 'rtrain-user-create-view-edit',
@@ -19,9 +20,8 @@ export class UserCreateViewEditComponent implements OnInit {
   user: IUserModel = new UserModel();
   isView = false;
   transportCompanies: ITransportCompanyModel[] = [];
+  stations: IStationModel[] = [];
   roles: IRoleModel[] = [];
-
-  selectedRoles: IRoleModel[] = [];
 
   constructor(
     private router: Router,
@@ -30,6 +30,7 @@ export class UserCreateViewEditComponent implements OnInit {
     private transportCompanyService: TransportCompanyService,
     private messageService: MessageService,
     private roleService: RoleService,
+    private stationService: StationService
   ) {
   }
 
@@ -38,6 +39,7 @@ export class UserCreateViewEditComponent implements OnInit {
     this.getUser();
     this.loadTransportCompany();
     this.loadRoles();
+    this.loadStations();
   }
 
   checkIfView(): void {
@@ -50,6 +52,10 @@ export class UserCreateViewEditComponent implements OnInit {
     if (userId) this.userService.getById(userId).subscribe({
       next: data => {
         if (data.body) this.user = data.body
+      },
+      complete: () => {
+        if (this.user.transportCompanyId === null) this.user.transportCompanyId = undefined;
+        if (this.user.stationId === null) this.user.stationId = undefined;
       }
     });
 
@@ -77,6 +83,14 @@ export class UserCreateViewEditComponent implements OnInit {
     this.roleService.getAllRoles().subscribe({
       next: (data) => {
         if(data && data.body) this.roles = data.body
+      }
+    })
+  }
+
+  loadStations(){
+    this.stationService.getAllForLines().subscribe({
+      next: (res) => {
+        if (res.body) this.stations = res.body;
       }
     })
   }
@@ -116,7 +130,6 @@ export class UserCreateViewEditComponent implements OnInit {
   }
 
   submit(){
-    // console.log(this.user)
     const url = this.router.url
     if (url.includes('create')) this.save();
     else this.update();

@@ -38,12 +38,12 @@
                 <p-sortIcon field="name"></p-sortIcon>
               </div>
             </th>
-            <th pSortableColumn="scheduled" style="min-width:10rem">
-              <div class="flex items-center justify-start">
-                <p>Czy w rozkładzie jazdy?</p>
-                <p-sortIcon field="scheduled"></p-sortIcon>
-              </div>
-            </th>
+<!--            <th pSortableColumn="scheduled" style="min-width:10rem">-->
+<!--              <div class="flex items-center justify-start">-->
+<!--                <p>Czy w rozkładzie jazdy?</p>-->
+<!--                <p-sortIcon field="scheduled"></p-sortIcon>-->
+<!--              </div>-->
+<!--            </th>-->
             <th style="min-width:20rem">
               <div class="flex justify-content-center align-items-center">
                 Akcje
@@ -59,10 +59,10 @@
             <td  class="whitespace-normal max-w-md">
               {{train.name}}
             </td>
-            <td>
-              <p-badge  [value]="train.scheduled ? 'Tak' : 'Nie'" [severity]="train.scheduled ? 'success' : 'danger'"></p-badge>
+<!--            <td>-->
+<!--              <p-badge  [value]="train.scheduled ? 'Tak' : 'Nie'" [severity]="train.scheduled ? 'success' : 'danger'"></p-badge>-->
 
-            </td>
+<!--            </td>-->
             <td>
               <button [routerLink]="['/admin/trains/view/' + train.id]" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Podgląd</button>
               <button [routerLink]="['/admin/trains/edit/' + train.id]" type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">Edycja</button>

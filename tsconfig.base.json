@@ -18,6 +18,13 @@
       "@rtrain/api": ["libs/api/index.ts"],
       "@rtrain/domain/models": ["libs/domain/models/index.ts"],
       "@rtrain/features/admin": ["libs/features/admin/src/index.ts"],
+      "@rtrain/features/incidents": ["libs/features/incidents/src/index.ts"],
+      "@rtrain/features/station-management": [
+        "libs/features/station-management/src/index.ts"
+      ],
+      "@rtrain/features/traffic-graph": [
+        "libs/features/traffic-graph/src/index.ts"
+      ],
       "@rtrain/features/train-schedule": [
         "libs/features/train-schedule/src/index.ts"
       ],

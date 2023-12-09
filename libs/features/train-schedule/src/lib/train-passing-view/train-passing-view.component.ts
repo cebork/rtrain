@@ -72,7 +72,7 @@ export class TrainPassingViewComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Błąd', detail: error.message });
         console.error(error)
       },
-      complete: () => this.equalizeLists(trains)
+      // complete: () => this.equalizeLists(trains)
     })
   }
 
@@ -82,6 +82,7 @@ export class TrainPassingViewComponent implements OnInit {
     this.trainService.getTrainsForCurrentUserTransportCompany().subscribe(
       response => {
         if (response.body) {
+          this.avaliableTrains = response.body.data;
           trains = response.body.data;
           this.totalRecords = response.body.totalRecords;
         }
@@ -119,13 +120,13 @@ export class TrainPassingViewComponent implements OnInit {
     if (!this.trainForSchedule.isOnce) this.trainForSchedule.isOnce = false;
     this.trainForSchedule.lineId = this.lineId;
     this.trainsForSchedule.push(this.trainForSchedule);
-    this.avaliableTrains = this.avaliableTrains.filter(train => train.id !== this.trainForSchedule.train?.id)
+    // this.avaliableTrains = this.avaliableTrains.filter(train => train.id !== this.trainForSchedule.train?.id)
     this.trainForSchedule = new TrainForScheduleModel();
     this.visible = false;
   }
 
   submitBack(trainForSchedule: ITrainForScheduleModel){
-    this.avaliableTrains.push(trainForSchedule.train!)
+    // this.avaliableTrains.push(trainForSchedule.train!)
     this.trainsForSchedule = this.trainsForSchedule.filter(tfS => tfS.train?.id !== trainForSchedule.train?.id)
   }
 

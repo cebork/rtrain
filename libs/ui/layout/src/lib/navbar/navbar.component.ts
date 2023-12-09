@@ -24,21 +24,21 @@ export class NavbarComponent implements OnInit {
       disabled: false
     },
     {
-      label: "Wykresy ruchu",
-      icon: "pi pi-fw pi-chart-line",
-      routerLink: "/pd",
+      label: "Stacja",
+      icon: "pi pi-fw fa-solid fa-warehouse",
+      routerLink: "/station-management",
       disabled: true
     },
     {
       label: "Incydenty",
       icon: "pi pi-fw fa-solid fa-bolt",
-      routerLink: "/risk",
+      routerLink: "/incidents-home",
       disabled: true
     },
     {
-      label: "Stacja",
-      icon: "pi pi-fw fa-solid fa-warehouse",
-      routerLink: "/risk",
+      label: "Wykresy ruchu",
+      icon: "pi pi-fw pi-chart-line",
+      routerLink: "/traffic-lines-view",
       disabled: true
     }
   ];

@@ -2,6 +2,7 @@ import {ITrainModel} from "../trainModels/train.model";
 import {ILineModel} from "../lineModels/line.model";
 import {IStationModel} from "../stationModels/station.model";
 import {active, line} from "d3";
+import {scheduled} from "rxjs";
 
 export interface ITrainForScheduleModel {
   id?: string;
@@ -15,6 +16,7 @@ export interface ITrainForScheduleModel {
   toStationId?: string
   toStation?: IStationModel
   isOnce?: boolean
+  scheduled?: boolean
 }
 
 export class TrainForScheduleModel implements ITrainForScheduleModel {
@@ -29,11 +31,11 @@ export class TrainForScheduleModel implements ITrainForScheduleModel {
   train?: ITrainModel;
   trainId?: string;
   isOnce?: boolean
-
+  scheduled?: boolean
 
   constructor(active?: boolean, fromStation?: IStationModel, fromStationId?: string, id?: string, line?: ILineModel,
               lineId?: string, toStation?: IStationModel, toStationId?: string, train?: ITrainModel, trainId?: string,
-              isOnce?: boolean) {
+              isOnce?: boolean, scheduled?: boolean) {
     this.active = active;
     this.fromStation = fromStation;
     this.fromStationId = fromStationId;
@@ -45,5 +47,6 @@ export class TrainForScheduleModel implements ITrainForScheduleModel {
     this.train = train;
     this.trainId = trainId;
     this.isOnce = isOnce;
+    this.scheduled = scheduled;
   }
 }

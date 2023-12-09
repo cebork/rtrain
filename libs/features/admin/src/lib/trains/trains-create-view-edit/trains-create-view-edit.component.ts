@@ -69,7 +69,7 @@ export class TrainsCreateViewEditComponent implements OnInit {
 
   save(){
     this.trainModel.transportCompanyId = this.account.transportCompanyId;
-    this.trainModel.scheduled = false;
+    // this.trainModel.scheduled = false;
     this.trainModel.active = true;
     this.trainService.create(this.trainModel).subscribe({
       error: (error) => {

@@ -13,7 +13,7 @@ export interface ITrainModel {
   transportCompany?: ITransportCompanyModel;
   trainTypeId?: string;
   trainType?: ITrainTypeModel;
-  scheduled?: boolean
+
 }
 
 export class TrainModel implements ITrainModel{
@@ -25,11 +25,11 @@ export class TrainModel implements ITrainModel{
   transportCompanyId?: string
   transportCompany?: ITransportCompanyModel;
   trainType?: ITrainTypeModel;
-  scheduled?: boolean
+
 
 
   constructor(id?: string, active?: boolean, code?: string, name?: string, wagonNumber?: number, transportCompanyId?: string,
-              transportCompany?: ITransportCompanyModel, trainType?: ITrainTypeModel, scheduled?: boolean) {
+              transportCompany?: ITransportCompanyModel, trainType?: ITrainTypeModel) {
     this.id = id;
     this.active = active;
     this.code = code;
@@ -38,6 +38,6 @@ export class TrainModel implements ITrainModel{
     this.transportCompanyId = transportCompanyId;
     this.transportCompany = transportCompany;
     this.trainType = trainType;
-    this.scheduled = scheduled;
+
   }
 }

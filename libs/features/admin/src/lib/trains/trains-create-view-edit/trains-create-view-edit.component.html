@@ -18,16 +18,16 @@
       <label for="wagonNumber" class="peer-focus:font-medium absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Ilość wagonów</label>
     </div>
 
-    <div class="relative z-10 w-full mb-6 group">
-      <label for="scheduled" class="font-medium mr-10">Czy pociąg jest w rozkładzie jazdy?</label>
-      <p-badge id="scheduled" [value]="trainModel.scheduled ? 'Tak' : 'Nie'" [severity]="trainModel.scheduled ? 'success' : 'danger'"></p-badge>
+<!--    <div class="relative z-10 w-full mb-6 group">-->
+<!--      <label for="scheduled" class="font-medium mr-10">Czy pociąg jest w rozkładzie jazdy?</label>-->
+<!--      <p-badge id="scheduled" [value]="trainModel.scheduled ? 'Tak' : 'Nie'" [severity]="trainModel.scheduled ? 'success' : 'danger'"></p-badge>-->
 
       <!--      <select [(ngModel)]="trainModel.trainTypeId" [disabled]="isView" name="trainType" id="trainType" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>-->
 <!--        <option [ngValue]="undefined" selected disabled>Wybierz typ pociągu</option>-->
 <!--        <option *ngFor="let trainType of trainTypes" [ngValue]="trainType.id">{{trainType.name}}</option>-->
 <!--      </select>-->
 <!--      <label for="trainType" class="absolute peer-focus:font-medium text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 left-0 top-3 bg-white mx-2 z-50 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Typ pociągu</label>-->
-    </div>
+<!--    </div>-->
 
     <div class="relative z-10 w-full mb-6 group">
       <select [(ngModel)]="trainModel.trainTypeId" [disabled]="isView" name="trainType" id="trainType" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>

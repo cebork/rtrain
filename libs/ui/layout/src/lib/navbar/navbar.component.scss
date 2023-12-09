@@ -22,20 +22,6 @@
     border-radius: 0 50px 50px 0;
     width: 100%;
   }
-
-  &::after,
-  &::before {
-    transition: all 0.2s ease-in;
-    position: absolute;
-    background-color: transparent;
-    content: "";
-  }
-  &::before {
-    box-shadow: 0 -16px 0 0 rgba(0, 0, 0, 0);
-  }
-  &::after {
-    box-shadow: 0 16px 0 0 rgba(0, 0, 0, 0);
-  }
 }
 .active-link {
   color: black;

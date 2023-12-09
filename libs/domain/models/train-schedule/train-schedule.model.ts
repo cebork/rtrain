@@ -1,6 +1,7 @@
 import {IStationModel} from "../stationModels/station.model";
 import {ITrainModel} from "../trainModels/train.model";
 import {ILineModel} from "../lineModels/line.model";
+import {ITrainForScheduleModel} from "./train-for-schedule.model";
 
 export interface ITrainScheduleModel {
   id?: string;
@@ -14,6 +15,8 @@ export interface ITrainScheduleModel {
   train?: ITrainModel;
   lineId?: string;
   line?: ILineModel;
+  trainForScheduleId?: string;
+  trainForSchedule?: ITrainForScheduleModel;
 }
 
 export class TrainScheduleModel implements ITrainScheduleModel{
@@ -28,9 +31,12 @@ export class TrainScheduleModel implements ITrainScheduleModel{
   train?: ITrainModel;
   lineId?: string;
   line?: ILineModel;
+  trainForScheduleId?: string;
+  trainForSchedule?: ITrainForScheduleModel;
 
   constructor(active?: boolean, arrivalTime?: Date, departureTime?: Date,
-              id?: string, order?: number, train?: ITrainModel, trainId?: string, lineId?: string, line?: ILineModel) {
+              id?: string, order?: number, train?: ITrainModel, trainId?: string, lineId?: string, line?: ILineModel,
+              trainForScheduleId?: string, trainForSchedule?: ITrainForScheduleModel) {
     this.active = active;
     this.arrivalTime = arrivalTime;
     this.departureTime = departureTime;
@@ -40,5 +46,7 @@ export class TrainScheduleModel implements ITrainScheduleModel{
     this.trainId = trainId;
     this.lineId = lineId;
     this.line = line;
+    this.trainForScheduleId = trainForScheduleId;
+    this.trainForSchedule = trainForSchedule;
   }
 }

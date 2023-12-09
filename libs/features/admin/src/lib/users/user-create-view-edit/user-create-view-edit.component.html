@@ -28,11 +28,18 @@
       <label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Numer telefonu</label>
     </div>
     <div class="relative z-10 w-full mb-6 group">
-      <select [(ngModel)]="user.transportCompanyId" [disabled]="isView" name="transport_company" id="transport_company" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+      <select [(ngModel)]="user.transportCompanyId" [disabled]="isView" name="transport_company" id="transport_company" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
         <option [ngValue]="undefined" selected disabled>Wybierz przewoźnika</option>
         <option *ngFor="let transportCompany of transportCompanies" [ngValue]="transportCompany.id">{{transportCompany.name}}</option>
       </select>
       <label for="transport_company" class="absolute peer-focus:font-medium text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 left-0 top-3 bg-white mx-2 z-50 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Przewoźnik</label>
+    </div>
+    <div class="relative z-10 w-full mb-6 group">
+      <select [(ngModel)]="user.stationId" [disabled]="isView" name="station" id="station" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+        <option [ngValue]="undefined" selected disabled>Wybierz stacje</option>
+        <option *ngFor="let station of stations" [ngValue]="station.id">{{station.name}}</option>
+      </select>
+      <label for="transport_company" class="absolute peer-focus:font-medium text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 left-0 top-3 bg-white mx-2 z-50 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Stacja</label>
     </div>
     <div class="relative z-0 w-full mb-6 group bg-accent-light bg-opacity-10">
       <input [(ngModel)]="user.jobPosition"  [disabled]="isView" type="text" name="job_position" id="job_position" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />

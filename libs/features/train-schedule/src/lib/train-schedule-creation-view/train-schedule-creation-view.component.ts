@@ -55,6 +55,7 @@ export class TrainScheduleCreationViewComponent {
       response => {
         if (response.body) {
           this.trainForScheduleModels = response.body.data;
+          console.log(this.trainForScheduleModels)
           this.totalRecords = response.body.totalRecords;
         }
         this.loading = false;

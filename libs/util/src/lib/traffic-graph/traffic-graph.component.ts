@@ -7,9 +7,9 @@ import {ISingleLine} from "@rtrain/domain/models";
   styleUrls: ['./traffic-graph.component.css'],
 })
 export class TrafficGraphComponent implements OnInit, AfterViewInit{
-  @Input({required: true}) lineId!: string
-  @Input() trainSchedules: any[] = []
-  @Input() trainRealTimeSchedules: any[] = []
+  // @Input({required: true}) lineId!: string
+  // @Input() trainSchedules: any[] = []
+  // @Input() trainRealTimeSchedules: any[] = []
   cities = ['Łuków', 'Krynka', 'Dziewule', 'Radomyśl', 'Siedlce']
   canvas: any;
 
@@ -36,7 +36,7 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit{
 
 
   ngOnInit(): void {
-    console.log(this.lineId)
+    // console.log(this.lineId)
   }
 
   ngAfterViewInit(): void {

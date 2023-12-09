@@ -13,7 +13,7 @@ export interface IUserModel extends FiltringModel {
   emailConfirmed?: boolean;
   active?: boolean;
   roles?: IRoleModel[];
-
+  stationId?: string;
 }
 
 export class UserModel implements IUserModel{
@@ -28,10 +28,11 @@ export class UserModel implements IUserModel{
   active?: boolean;
   roles?: IRoleModel[] = [];
   userName?: string;
+  stationId?: string;
 
   constructor(emailConfirmed?: boolean, email?: string, firstName?: string, id?: string,
               jobPosition?: string, lastName?: string, phoneNumber?: string,
-              transportCompanyId?: string, active?: boolean, userName?: string) {
+              transportCompanyId?: string, active?: boolean, userName?: string, stationId?: string) {
     this.emailConfirmed = emailConfirmed;
     this.email = email;
     this.firstName = firstName;
@@ -42,6 +43,7 @@ export class UserModel implements IUserModel{
     this.transportCompanyId = transportCompanyId;
     this.active = active;
     this.userName = userName;
+    this.stationId = stationId;
   }
 }
 

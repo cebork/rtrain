@@ -11,8 +11,8 @@ export class TrainScheduleService {
   constructor(private http: HttpClient) {
   }
 
-  getTrainScheduleForLine(lineId: string, trainId: string): Observable<HttpResponse<ITrainScheduleModel[]>> {
-    return this.http.get<ITrainScheduleModel[]>(`${this.baseURL}/GetTrainScheduleForLine/${trainId}/${lineId}`, {responseType: 'json', observe: 'response'})
+  getTrainScheduleForLine(lineId: string, trainId: string, trainForScheduleId: string): Observable<HttpResponse<ITrainScheduleModel[]>> {
+    return this.http.get<ITrainScheduleModel[]>(`${this.baseURL}/GetTrainScheduleForLine/${trainId}/${lineId}/${trainForScheduleId}`, {responseType: 'json', observe: 'response'})
   }
 
   saveAll(trainScheduleCopy: any): Observable<HttpResponse<ITrainScheduleModel[]>> {

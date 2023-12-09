@@ -48,4 +48,7 @@ export class TrainForScheduleService {
     return this.http.get<IGenericGetAllModelModel<ITrainForScheduleModel>>(this.baseURL + '/GetAllForLineTrainSchedule', { params, observe: "response", responseType: "json" });
   }
 
+  setTrainForScheduleStateTrue(trainForScheduleId: string): Observable<HttpResponse<ITrainForScheduleModel>> {
+    return this.http.patch(`${this.baseURL}/setTrainForScheduleStateTrue`, {data: trainForScheduleId}, {observe: "response", responseType: "json"})
+  }
 }

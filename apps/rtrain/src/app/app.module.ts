@@ -13,9 +13,11 @@ import { StoreRouterConnectingModule } from "@ngrx/router-store";
 import { FeaturesAdminModule } from "@rtrain/features/admin";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import {UtilModule} from "@rtrain/util";
 import {FeaturesTrainScheduleModule} from "@rtrain/features/train-schedule";
 import {TabMenuModule} from "primeng/tabmenu";
+import {FeaturesStationManagementModule} from "@rtrain/features/station-management";
+import {FeaturesTrafficGraphModule} from "@rtrain/features/traffic-graph";
+import {FeaturesIncidentsModule} from "@rtrain/features/incidents";
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
@@ -32,7 +34,10 @@ import {TabMenuModule} from "primeng/tabmenu";
     BrowserAnimationsModule,
     FontAwesomeModule,
     FeaturesTrainScheduleModule,
-    TabMenuModule
+    TabMenuModule,
+    FeaturesStationManagementModule,
+    FeaturesTrafficGraphModule,
+    FeaturesIncidentsModule
   ],
   providers: [],
   bootstrap: [AppComponent],

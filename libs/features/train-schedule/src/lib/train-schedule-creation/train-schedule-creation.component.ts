@@ -1,18 +1,15 @@
 import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import {NgForm} from "@angular/forms";
 import {
-  ILineModel, ITrainModel, ITrainScheduleModel,
+  ILineModel, ITrainForScheduleModel, ITrainModel, ITrainScheduleModel,
 } from "@rtrain/domain/models";
 import {ActivatedRoute, Router} from "@angular/router";
 import {
   LineService,
   TrainForScheduleService,
-  TrainScheduleService,
+  TrainScheduleService, TrainService,
 } from "@rtrain/api";
 import {MessageService} from "primeng/api";
-import removeLibraryGeneratorSimpleModuleNameOption
-  from "@nx/angular/src/migrations/update-16-0-0/remove-library-generator-simple-module-name-option";
-import * as ts from "@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript";
 
 @Component({
   selector: 'rtrain-train-schedule-creation',
@@ -27,33 +24,36 @@ export class TrainScheduleCreationComponent {
   line: ILineModel | undefined;
   train: ITrainModel | undefined;
   trainSchedules: ITrainScheduleModel[] = [];
-
-  x = new Date()
-
+  trainForSchedule: ITrainForScheduleModel | undefined;
+  validateForm = false;
   constructor(
       private router: Router,
       private activatedRoute: ActivatedRoute,
       private lineService: LineService,
       private messageService: MessageService,
       private trainScheduleService: TrainScheduleService,
-      private trainForScheduleService: TrainForScheduleService
+      private trainForScheduleService: TrainForScheduleService,
+      private trainService: TrainService
   ) {
-    console.log(this.x)
   }
 
   ngOnInit(): void {
     this.trainForScheduleId = this.activatedRoute.snapshot.paramMap.get("trainId")!;
     this.lineId = this.activatedRoute.snapshot.paramMap.get("lineID")!;
-    this.getTrain();
+    this.getTrainAndTrainForSchedule();
     this.getTrainSchedule();
 
   }
 
-  getTrain(){
+  getTrainAndTrainForSchedule(){
     if (this.trainForScheduleId) {
       this.trainForScheduleService.getById(this.trainForScheduleId).subscribe({
         next: (res) => {
-          if (res.body) this.train = res.body.train;
+          if (res.body) {
+            this.train = res.body.train;
+            this.trainForSchedule = res.body;
+            console.log(res.body)
+          }
         },
         complete: () => {
           this.getLine();
@@ -75,7 +75,7 @@ export class TrainScheduleCreationComponent {
 
   getTrainSchedule(){
     if (this.train && this.train.id) {
-      this.trainScheduleService.getTrainScheduleForLine(this.lineId, this.train.id).subscribe({
+      this.trainScheduleService.getTrainScheduleForLine(this.lineId, this.train.id, this.trainForScheduleId).subscribe({
         next: (res) => {
           if (res.body) {
             this.convertStringDateToObject(res.body);
@@ -104,16 +104,23 @@ export class TrainScheduleCreationComponent {
       tS.train = undefined;
       tS.lineId = tS.line?.id;
       tS.line = undefined;
+      tS.trainForScheduleId = this.trainForScheduleId
+      tS.trainForSchedule = undefined;
     })
-    console.log(this.trainSchedules)
+
     this.trainScheduleService.saveAll(trainScheduleCopy).subscribe({
       error: (error: any) => {
         this.messageService.add({severity: 'error', summary: 'Wystąpił błąd', detail: error.message})
       },
       complete: () => {
         this.messageService.add({severity: 'success', summary: 'Sukces', detail: 'Pomyślnie utworzono lub zmodyfikowano rozkład jazdy'})
+        this.changeTrainScheduleState();
       }
     })
+  }
+
+  changeTrainScheduleState(){
+    this.trainForScheduleService.setTrainForScheduleStateTrue(this.trainForScheduleId).subscribe({})
   }
 
   convertStringDateToObject(trainSchedules: ITrainScheduleModel[]){
@@ -124,4 +131,16 @@ export class TrainScheduleCreationComponent {
 
     this.trainSchedules = trainSchedules;
   }
+
+  checkIfIsValid() {
+    let validFlag = false;
+    setTimeout(() => {
+      this.trainSchedules.forEach(tS => {
+        if (tS.arrivalTime && !tS.departureTime) validFlag = true;
+      });
+      this.validateForm = validFlag;
+    },100)
+
+  }
+
 }
