@@ -27,6 +27,8 @@ import {
 } from "./incident-codes/incident-codes-create-view-edit/incident-codes-create-view-edit.component";
 import {TrainsHomeComponent} from "./trains/trains-home/trains-home.component";
 import {TrainsCreateViewEditComponent} from "./trains/trains-create-view-edit/trains-create-view-edit.component";
+import {FirmsHomeComponent} from "./firms/firms-home/firms-home.component";
+import {FirmsCreateViewEditComponent} from "./firms/firms-create-view-edit/firms-create-view-edit.component";
 
 
 export const adminRoutes: Route[] = [
@@ -194,6 +196,26 @@ export const adminRoutes: Route[] = [
   {
     path: "admin/trains/view/:id",
     component: TrainsCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/firms",
+    component: FirmsHomeComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/firms/create",
+    component: FirmsCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/firms/edit/:id",
+    component: FirmsCreateViewEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "admin/firms/view/:id",
+    component: FirmsCreateViewEditComponent,
     canActivate: [AuthGuard]
   }
 ];

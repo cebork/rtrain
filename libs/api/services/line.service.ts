@@ -36,4 +36,8 @@ export class LineService {
   delete(userId: string): Observable<HttpResponse<ILineModel>> {
     return this.http.delete(`${this.baseURL}/Delete/${userId}`, {observe: 'response', responseType: "json"})
   }
+
+  getLinesAssociatedWithStation(stationId: string): Observable<HttpResponse<ILineModel[]>> {
+    return this.http.get<ILineModel[]>(`${this.baseURL}/getLinesAssociatedWithStation/${stationId}`, {responseType: "json", observe: "response"});
+  }
 }

@@ -1,0 +1,8 @@
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.unresize {
+    resize: none
+}

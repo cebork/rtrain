@@ -1,0 +1,54 @@
+<div class="flex flex-col">
+  <div class="flex flex-row items-center m-10 px-5">
+    <h3 class="text-2xl font-semibold"><fa-icon class="fas fa-grip-lines"></fa-icon>&nbsp; Lista linii do rozkładu jazdy</h3>
+  </div>
+  <div class="flex flex-row m-auto">
+    <div class="card">
+
+      <p-table #dt1 [value]="availableLines">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="min-width:35rem">
+              <div class="flex items-center justify-start">
+                <p>Nazwa</p>
+              </div>
+
+            </th>
+            <th style="min-width:15rem">
+              <div class="flex items-center justify-start">
+                <p>Symbol</p>
+              </div>
+            </th>
+
+            <th style="min-width:15rem">
+              <div class="flex justify-content-center align-items-center">
+                Akcje
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-line>
+          <tr>
+            <td>
+              {{line.name}}
+            </td>
+            <td>
+              {{line.symbol }}
+            </td>
+            <td>
+              <button [routerLink]="['/station-management/near-incidents-local-routes/' + line.id]" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Przejdź do</button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">No lines found</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+</div>
+
+

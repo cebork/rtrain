@@ -2,8 +2,8 @@ import {Injectable} from "@angular/core";
 import {apiAddress} from "../env-variable";
 import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {IGenericGetAllModelModel} from "../../domain/models/generic-GetAll-Model.model";
-import {ILocalizationModel, ILocalRouteModel, IStationModel} from "../../domain/models";
+import {IGenericGetAllModelModel} from "../../domain/models";
+import {ILocalRouteModel} from "../../domain/models";
 
 @Injectable()
 export class LocalRouteService {
@@ -54,4 +54,7 @@ export class LocalRouteService {
     return this.http.get<IGenericGetAllModelModel<ILocalRouteModel>>(this.baseURL + '/GetAllForLineTrainSchedule', { params, observe: "response", responseType: "json" });
   }
 
+  getAllForLineStationLevel(lineId: string, stationId: string): Observable<HttpResponse<ILocalRouteModel[]>> {
+    return this.http.get<ILocalRouteModel[]>(`${this.baseURL}/GetAllForLineStationLevel/${lineId}/${stationId}`, {observe: "response", responseType: "json"})
+  }
 }

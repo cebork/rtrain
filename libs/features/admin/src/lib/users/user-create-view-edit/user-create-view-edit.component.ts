@@ -1,13 +1,12 @@
 import {Component, OnInit, ViewChild, ViewRef} from '@angular/core';
-import {IStationModel, IUserModel, UserModel} from "@rtrain/domain/models";
+import {IFirmModel, IStationModel, IUserModel, UserModel} from "@rtrain/domain/models";
 import {ActivatedRoute, Router} from "@angular/router";
-import {RoleService, StationService, TransportCompanyService, UserService} from "@rtrain/api";
+import {FirmService, RoleService, StationService, TransportCompanyService, UserService} from "@rtrain/api";
 import {ITransportCompanyModel} from "@rtrain/domain/models";
 import {NgForm} from "@angular/forms";
 import {MessageService} from "primeng/api";
 import {IRoleModel} from "@rtrain/domain/models";
 import {HttpErrorResponse, HttpStatusCode} from "@angular/common/http";
-import {data} from "autoprefixer";
 
 @Component({
   selector: 'rtrain-user-create-view-edit',
@@ -22,6 +21,7 @@ export class UserCreateViewEditComponent implements OnInit {
   transportCompanies: ITransportCompanyModel[] = [];
   stations: IStationModel[] = [];
   roles: IRoleModel[] = [];
+  firms: IFirmModel[] = [];
 
   constructor(
     private router: Router,
@@ -30,7 +30,8 @@ export class UserCreateViewEditComponent implements OnInit {
     private transportCompanyService: TransportCompanyService,
     private messageService: MessageService,
     private roleService: RoleService,
-    private stationService: StationService
+    private stationService: StationService,
+    private firmService: FirmService
   ) {
   }
 
@@ -40,6 +41,7 @@ export class UserCreateViewEditComponent implements OnInit {
     this.loadTransportCompany();
     this.loadRoles();
     this.loadStations();
+    this.loadFirms();
   }
 
   checkIfView(): void {
@@ -117,6 +119,7 @@ export class UserCreateViewEditComponent implements OnInit {
   }
 
   update(){
+    console.log(this.user)
     this.userService.update(this.user).subscribe({
       error: (error) => {
         this.messageService.add({ severity: 'error', summary: 'Błąd', detail: error });
@@ -153,4 +156,13 @@ export class UserCreateViewEditComponent implements OnInit {
     return this.user?.roles?.some(r => r.name === roleName)
     return false;
   }
+
+  loadFirms() {
+    this.firmService.getRawForDropdown().subscribe({
+      next: (res) => {
+        if (res.body) this.firms = res.body;
+      }
+    })
+  }
+
 }

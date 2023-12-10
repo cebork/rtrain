@@ -1,8 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IStationModel, LocalizationModel, StationModel, TransportCompanyModel} from "@rtrain/domain/models";
+import {IFirmModel, IStationModel, StationModel} from "@rtrain/domain/models";
 import {ActivatedRoute, Router} from "@angular/router";
-import {StationService, TransportCompanyService} from "@rtrain/api";
-import {ITransportCompanyModel} from "@rtrain/domain/models";
+import {FirmService, StationService} from "@rtrain/api";
 import {NgForm} from "@angular/forms";
 import {MessageService} from "primeng/api";
 
@@ -16,24 +15,29 @@ export class StationCreateViewEditComponent implements OnInit {
 
   station: IStationModel = new StationModel();
   isView = false;
+  firms: IFirmModel[] = []
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private stationService: StationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private firmService: FirmService
   ) {
   }
 
   ngOnInit(): void {
     this.checkIfView();
     this.getStation();
+    this.loadFirms();
   }
 
   checkIfView(): void {
     const url = this.router.url
     if (url.includes('view')) this.isView = true;
   }
+
+
 
   getStation(){
     const userId = this.activatedRoute.snapshot.paramMap.get("id");
@@ -43,6 +47,14 @@ export class StationCreateViewEditComponent implements OnInit {
       }
     });
 
+  }
+
+  loadFirms() {
+    this.firmService.getRawForDropdown().subscribe({
+      next: (res) => {
+        if (res.body) this.firms = res.body;
+      }
+    })
   }
 
   save(){

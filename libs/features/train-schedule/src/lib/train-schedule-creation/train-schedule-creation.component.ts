@@ -88,7 +88,6 @@ export class TrainScheduleCreationComponent {
 
   saveAll(){
     const trainScheduleCopy = JSON.parse(JSON.stringify(this.trainSchedules))
-    console.log('fresh', )
     trainScheduleCopy.forEach( (tS: ITrainScheduleModel) => {
       if (tS.departureTime) {
         tS.departureTime = new Date(tS.departureTime)

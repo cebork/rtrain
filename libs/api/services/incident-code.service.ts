@@ -35,4 +35,8 @@ export class IncidentCodeService {
   delete(incidentCodeId: string): Observable<HttpResponse<IIncidentCodeModel>> {
     return this.http.delete(`${this.baseURL}/Delete/${incidentCodeId}`, {observe: 'response', responseType: "json"})
   }
+
+  getRawIncidentCodes(): Observable<HttpResponse<IIncidentCodeModel[]>> {
+      return this.http.get<IIncidentCodeModel[]>(`${this.baseURL}/getRawIncidentCodes`, {observe: "response", responseType: "json"})
+  }
 }

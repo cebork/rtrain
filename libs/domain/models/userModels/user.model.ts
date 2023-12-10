@@ -1,5 +1,6 @@
 import {FiltringModel} from "../filtring.model";
 import {IRoleModel} from "../roleModels/role.model";
+import {IFirmModel} from "../firmModels/firm.model";
 
 export interface IUserModel extends FiltringModel {
   id?: string;
@@ -14,6 +15,8 @@ export interface IUserModel extends FiltringModel {
   active?: boolean;
   roles?: IRoleModel[];
   stationId?: string;
+  firmId?: string;
+  firm?: IFirmModel;
 }
 
 export class UserModel implements IUserModel{
@@ -29,10 +32,14 @@ export class UserModel implements IUserModel{
   roles?: IRoleModel[] = [];
   userName?: string;
   stationId?: string;
+  firmId?: string;
+  firm?: IFirmModel;
 
-  constructor(emailConfirmed?: boolean, email?: string, firstName?: string, id?: string,
-              jobPosition?: string, lastName?: string, phoneNumber?: string,
-              transportCompanyId?: string, active?: boolean, userName?: string, stationId?: string) {
+  constructor(
+    emailConfirmed?: boolean, email?: string, firstName?: string, id?: string, jobPosition?: string, lastName?: string,
+    phoneNumber?: string, transportCompanyId?: string, active?: boolean, userName?: string, stationId?: string,
+    firmId?: string, firm?: IFirmModel
+  ) {
     this.emailConfirmed = emailConfirmed;
     this.email = email;
     this.firstName = firstName;
@@ -44,6 +51,8 @@ export class UserModel implements IUserModel{
     this.active = active;
     this.userName = userName;
     this.stationId = stationId;
+    this.firmId = firmId;
+    this.firm = firm;
   }
 }
 

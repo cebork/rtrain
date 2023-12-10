@@ -1,0 +1,134 @@
+<div class="flex flex-row m-10 px-5">
+  <h3 class="text-2xl font-semibold"><fa-icon class="fa-brands fa-connectdevelop"></fa-icon>&nbsp; Zdarzenia dla linii -  {{line?.name}}</h3>
+  <button [routerLink]="['/station-management/near-incidents-lines']" type="button" class="ml-auto focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"><fa-icon class="fas fa-arrow-left"></fa-icon> Wstecz</button>
+</div>
+<div class="flex flex-row bg-white m-10 p-10 rounded-2xl">
+  <div class="flex flex-col w-full relative  shadow-md sm:rounded-lg my-5">
+    <table class=" text-sm text-left rtl:text-right text-gray-500">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3">
+          Lp.
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Ze stacji
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Do stacji
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Czy problem?
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Akcje
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="odd:bg-white even:bg-gray-50 border-b" *ngFor="let localRouteModel of localRoutes; let idx = index; let first = first; let last = last">
+        <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+          {{idx + 1}}
+        </td>
+        <td class="px-6 py-4">
+          {{localRouteModel.fromStation?.name}}
+        </td>
+        <td class="px-6 py-4">
+          {{localRouteModel.toStation?.name}}
+        </td>
+        <td class="px-6 py-4">
+          <p-badge  [value]="localRouteModel.routeProblem ? 'TAK' : 'NIE'" [severity]="localRouteModel.routeProblem ? 'danger' : 'success'"></p-badge>
+
+        </td>
+        <td>
+          <button (click)="openViewModal(localRouteModel)" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Podgląd zdarzeń</button>
+          <button (click)="openAddingModal(localRouteModel)" type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900">Dodaj zdarzenie</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<p-dialog header="{{currentLocalRoute?.fromStation?.name}} - {{currentLocalRoute?.toStation?.name}}" [(visible)]="visibleAdding" [style]="{width: '50vw'}" [resizable]="false">
+  <form #formRef="ngForm" (submit)="addEvent()" class="flex flex-col w-full" *ngIf="incident">
+
+    <div class="relative z-0 w-full mb-6 mt-4 group bg-accent-light bg-opacity-10">
+      <input [(ngModel)]="incident.name" type="text" name="name" id="name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+      <label for="name" class="peer-focus:font-medium absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nazwa</label>
+    </div>
+
+    <div class="relative z-0 w-full mb-6 group bg-opacity-10">
+      <textarea [(ngModel)]="incident.description" id="description" name="description" rows="4" class="unresize block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Podaj opis zdarzenia"></textarea>
+      <label for="description" class="peer-focus:font-medium absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Opis</label>
+    </div>
+
+<!--    <div class="relative z-10 w-full mb-6 group mt-4">-->
+<!--      <select [(ngModel)]="incident.incidentCodeId" name="incidentCode" id="incidentCode" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>-->
+<!--        <option [ngValue]="undefined" selected disabled>Wybierz kod incydentu</option>-->
+<!--        <option *ngFor="let incidentCodeModel of incidentCodes" [ngValue]="incidentCodeModel.id" > {{incidentCodeModel.name}} - {{incidentCodeModel.description}}</option>-->
+<!--      </select>-->
+<!--      <label for="incidentCode" class="absolute peer-focus:font-medium text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 left-0 top-3 bg-white mx-2 z-50 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Kody incydentów</label>-->
+<!--    </div>-->
+    <button [disabled]="!formRef.valid" type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><i class="fa-solid fa-check"></i> Dodaj</button>
+  </form>
+</p-dialog>
+
+
+<p-dialog header="{{currentLocalRoute?.fromStation?.name}} - {{currentLocalRoute?.toStation?.name}}" [(visible)]="visibleView" [style]="{width: '75vw'}" [resizable]="false">
+  <p-table #dt1 [value]="incidents" [lazy]="true" (onLazyLoad)="loadIncidents($event)"
+           [paginator]="true" [rows]="10" [totalRecords]="totalRecords"
+           [loading]="loading" [sortField]="defaultSortField" [sortOrder]="defaultSortOrder">
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <button type="button"  (click)="clear(dt1, filterInput)" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+          <i class="pi pi-filter-slash"></i> Wyczyść filtry
+        </button>
+        <span class="flex items-center ml-auto">
+              <i class="pi pi-search"></i>
+              <input #filterInput type="text" (input)="filter($event.target, dt1)" placeholder="Wyszukaj" class="pl-2"/>
+            </span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="name" style="min-width:20rem">
+          <div class="flex items-center justify-start">
+            <p>Nazwa</p>
+            <p-sortIcon field="name"></p-sortIcon>
+          </div>
+
+        </th>
+        <th pSortableColumn="description" style="min-width:40rem">
+          <div class="flex items-center justify-start">
+            <p>Opis</p>
+            <p-sortIcon field="description"></p-sortIcon>
+          </div>
+        </th>
+<!--        <th pSortableColumn="incidentCode.name" style="min-width:20rem">-->
+<!--          <div class="flex items-center justify-start">-->
+<!--            <p>Kod incydentu</p>-->
+<!--            <p-sortIcon field="incidentCode.name"></p-sortIcon>-->
+<!--          </div>-->
+<!--        </th>-->
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-incident>
+      <tr>
+        <td>
+          {{incident.name}}
+        </td>
+        <td>
+          {{incident.description}}
+        </td>
+<!--        <td>-->
+<!--          {{incident.incidentCode.name}}-->
+<!--        </td>-->
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7">No incident found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>

@@ -3,8 +3,8 @@ import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {IUserModel} from "../../domain/models";
 import {Injectable} from "@angular/core";
-import {IGenericGetAllModelModel} from "../../domain/models/generic-GetAll-Model.model";
-import {ITransportCompanyModel} from "../../domain/models/transportCompanyModels/transport-company.model";
+import {IGenericGetAllModelModel} from "../../domain/models";
+import {ITransportCompanyModel} from "../../domain/models";
 
 @Injectable()
 export class UserService {

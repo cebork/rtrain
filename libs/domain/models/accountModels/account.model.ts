@@ -1,16 +1,9 @@
 import {IRoleModel} from "../roleModels/role.model";
-import {active} from "d3";
 import {ITransportCompanyModel} from "../transportCompanyModels/transport-company.model";
 import {IStationModel} from "../stationModels/station.model";
+import {IFirmModel} from "../firmModels/firm.model";
 
 export interface IAccountModel {
-    // email: string;
-    // password: string;
-    // image?: string;
-    // firstName: string;
-    // lastName: string;
-    // jobPosition: string;
-
   id?: string;
   userName?: string;
   firstName?: string;
@@ -25,6 +18,8 @@ export interface IAccountModel {
   roles?: IRoleModel[];
   stationId?: string;
   station?: IStationModel;
+  firmId?: string;
+  firm?: IFirmModel
 }
 
 export class AccountModel implements IAccountModel {
@@ -43,11 +38,13 @@ export class AccountModel implements IAccountModel {
   roles?: IRoleModel[];
   stationId?: string;
   station?: IStationModel;
+  firmId?: string;
+  firm?: IFirmModel
 
   constructor(id?: string, userName?: string, firstName?: string, lastName?: string, jobPosition?: string,
               transportCompanyId?: string, email?: string, phoneNumber?: string, emailConfirmed?: boolean,
               active?: boolean, roles?: IRoleModel[], transportCompany?: ITransportCompanyModel, stationId?: string,
-              station?: IStationModel
+              station?: IStationModel, firmId?: string, firm?: IFirmModel
   ) {
     this.id = id;
     this.userName = userName;
@@ -63,5 +60,7 @@ export class AccountModel implements IAccountModel {
     this.roles = roles;
     this.stationId = stationId;
     this.station = station;
+    this.firmId = firmId;
+    this.firm = firm;
   }
 }

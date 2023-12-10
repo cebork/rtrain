@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NearIncidentsViewComponent } from './near-incidents-view.component';
+import { NearIncidentsLineViewComponent } from './near-incidents-line-view.component';
 
 describe('NearIncidentsViewComponent', () => {
-  let component: NearIncidentsViewComponent;
-  let fixture: ComponentFixture<NearIncidentsViewComponent>;
+  let component: NearIncidentsLineViewComponent;
+  let fixture: ComponentFixture<NearIncidentsLineViewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [NearIncidentsViewComponent],
+      declarations: [NearIncidentsLineViewComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(NearIncidentsViewComponent);
+    fixture = TestBed.createComponent(NearIncidentsLineViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

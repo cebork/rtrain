@@ -47,6 +47,11 @@ export class HomeComponent implements OnInit{
             command: () => this.navigate("/admin/lines")
           },
           {
+            label: 'Zarządzanie zakładami',
+            icon: 'fa-solid fa-building',
+            command: () => this.navigate("/admin/firms")
+          },
+          {
             label: 'Zarządzanie połączeniami',
             icon: 'fa-brands fa-connectdevelop',
             command: () => this.navigate("/admin/connections")

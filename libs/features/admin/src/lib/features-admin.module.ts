@@ -15,7 +15,8 @@ import {
   TrainTypeService,
   TransportCompanyService,
   UserService,
-  LineService, TrainService,
+  LineService,
+  TrainService, FirmService,
 } from '@rtrain/api';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
@@ -36,6 +37,9 @@ import { IncidentCodesCreateViewEditComponent } from './incident-codes/incident-
 import { IncidentCodesHomeComponent } from './incident-codes/incident-codes-home/incident-codes-home.component';
 import { TrainsHomeComponent } from './trains/trains-home/trains-home.component';
 import { TrainsCreateViewEditComponent } from './trains/trains-create-view-edit/trains-create-view-edit.component';
+import { FirmsHomeComponent } from './firms/firms-home/firms-home.component';
+import { FirmsCreateViewEditComponent } from './firms/firms-create-view-edit/firms-create-view-edit.component';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -67,6 +71,8 @@ import { TrainsCreateViewEditComponent } from './trains/trains-create-view-edit/
     IncidentCodesHomeComponent,
     TrainsHomeComponent,
     TrainsCreateViewEditComponent,
+    FirmsHomeComponent,
+    FirmsCreateViewEditComponent,
   ],
   providers: [
     UserService,
@@ -77,7 +83,8 @@ import { TrainsCreateViewEditComponent } from './trains/trains-create-view-edit/
     LocalRouteService,
     TrainTypeService,
     IncidentCodeService,
-    TrainService
+    TrainService,
+    FirmService
   ],
 })
 export class FeaturesAdminModule {}

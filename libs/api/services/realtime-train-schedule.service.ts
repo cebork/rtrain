@@ -15,4 +15,7 @@ export class RealtimeTrainScheduleService {
     return this.http.get<IRealtimeTrainScheduleModel[]>(`${this.baseURL}/getTodaySchedule/${stationId}`, {responseType: "json", observe: "response"})
   }
 
+  saveRealTime(realTimeTrainSchedule: IRealtimeTrainScheduleModel, stationId: string): Observable<HttpResponse<IRealtimeTrainScheduleModel[]>> {
+    return this.http.post<IRealtimeTrainScheduleModel[]>(`${this.baseURL}/saveRealtime/${stationId}`, realTimeTrainSchedule, {observe: 'response', responseType: 'json'});
+  }
 }
