@@ -137,7 +137,7 @@
   </div>
 </div>
 
-<p-dialog header="Przenoszenie pociągu" [(visible)]="visible" [style]="{width: '50vw'}">
+<p-dialog header="Przenoszenie pociągu" [(visible)]="visible" [style]="{width: '50vw'}" [modal]="true" [dismissableMask]="true">
   <form #formRef="ngForm" (submit)="submitMove()" class="flex flex-col w-full">
     <div class="relative z-10 w-full mb-6 group mt-4">
       <select [(ngModel)]="trainForSchedule.fromStation" name="station_1" id="station_1" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>

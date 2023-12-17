@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild, ViewRef} from '@angular/core';
-import {IFirmModel, IStationModel, IUserModel, UserModel} from "@rtrain/domain/models";
+import {IFirmModel, ILineModel, IStationModel, IUserModel, UserModel} from "@rtrain/domain/models";
 import {ActivatedRoute, Router} from "@angular/router";
-import {FirmService, RoleService, StationService, TransportCompanyService, UserService} from "@rtrain/api";
+import {FirmService, LineService, RoleService, StationService, TransportCompanyService, UserService} from "@rtrain/api";
 import {ITransportCompanyModel} from "@rtrain/domain/models";
 import {NgForm} from "@angular/forms";
 import {MessageService} from "primeng/api";
@@ -22,6 +22,7 @@ export class UserCreateViewEditComponent implements OnInit {
   stations: IStationModel[] = [];
   roles: IRoleModel[] = [];
   firms: IFirmModel[] = [];
+  lines: ILineModel[] = [];
 
   constructor(
     private router: Router,
@@ -31,7 +32,8 @@ export class UserCreateViewEditComponent implements OnInit {
     private messageService: MessageService,
     private roleService: RoleService,
     private stationService: StationService,
-    private firmService: FirmService
+    private firmService: FirmService,
+    private lineService: LineService
   ) {
   }
 
@@ -42,6 +44,7 @@ export class UserCreateViewEditComponent implements OnInit {
     this.loadRoles();
     this.loadStations();
     this.loadFirms();
+    this.loadLines();
   }
 
   checkIfView(): void {
@@ -58,6 +61,7 @@ export class UserCreateViewEditComponent implements OnInit {
       complete: () => {
         if (this.user.transportCompanyId === null) this.user.transportCompanyId = undefined;
         if (this.user.stationId === null) this.user.stationId = undefined;
+        if (this.user.lineId === null) this.user.lineId = undefined;
       }
     });
 
@@ -161,6 +165,14 @@ export class UserCreateViewEditComponent implements OnInit {
     this.firmService.getRawForDropdown().subscribe({
       next: (res) => {
         if (res.body) this.firms = res.body;
+      }
+    })
+  }
+
+  loadLines(){
+    this.lineService.getRawForDropdown().subscribe({
+      next: (res) => {
+        if (res.body) this.lines = res.body;
       }
     })
   }

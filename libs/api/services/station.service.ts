@@ -3,7 +3,7 @@ import {apiAddress} from "../env-variable";
 import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {IGenericGetAllModelModel} from "../../domain/models/generic-GetAll-Model.model";
-import {ILocalizationModel, IStationModel} from "../../domain/models";
+import {ILocalizationModel, IStationModel, IStationNameModel} from "../../domain/models";
 
 @Injectable()
 export class StationService {
@@ -60,5 +60,9 @@ export class StationService {
       observe: "response",
       responseType: "json"
     });
+  }
+
+  getStationsForTrafficGraph(lineId: string): Observable<HttpResponse<IStationNameModel[]>> {
+    return this.http.get<IStationNameModel[]>(`${this.baseURL}/getStationsForTrafficGraph/${lineId}`, {observe: "response", responseType: "json"})
   }
 }

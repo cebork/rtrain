@@ -16,6 +16,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { NearIncidentsLocalRoutesComponent } from './near-incidents-local-routes/near-incidents-local-routes.component';
 import {BadgeModule} from "primeng/badge";
 import {DialogModule} from "primeng/dialog";
+import {CheckboxModule} from "primeng/checkbox";
 
 @NgModule({
     imports: [
@@ -29,6 +30,7 @@ import {DialogModule} from "primeng/dialog";
         PaginatorModule,
         BadgeModule,
         DialogModule,
+        CheckboxModule,
     ],
   declarations: [
     StationManagementHomeComponent,

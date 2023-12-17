@@ -9,8 +9,12 @@ export interface IIncidentModel {
     incidentCode?: IIncidentCodeModel;
     localRouteId?: string;
     localRoute?: ILocalRouteModel;
-    closingStart?: Date;
-    closingEnd?: Date;
+    closingStart?: Date | null;
+    closingEnd?: Date| null;
+    isClosingNeeded?: boolean;
+    fromToClosing?: boolean;
+    toFromClosing?: boolean;
+    createdDate?: Date;
 }
 
 export class IncidentModel implements IIncidentModel {
@@ -23,10 +27,15 @@ export class IncidentModel implements IIncidentModel {
     name?: string;
     closingStart?: Date;
     closingEnd?: Date;
+    isClosingNeeded?: boolean;
+    fromToClosing?: boolean;
+    toFromClosing?: boolean;
+    createdDate?: Date;
 
     constructor(
       description?: string, id?: string, incidentCode?: IIncidentCodeModel, incidentCodeId?: string,
-      localRoute?: ILocalRouteModel, localRouteId?: string, name?: string, closingStart?: Date, closingEnd?: Date
+      localRoute?: ILocalRouteModel, localRouteId?: string, name?: string, closingStart?: Date, closingEnd?: Date,
+      isClosingNeeded?: boolean, fromToClosing?: boolean, toFromClosing?: boolean, createdDate?: Date
     ) {
         this.description = description;
         this.id = id;
@@ -37,5 +46,9 @@ export class IncidentModel implements IIncidentModel {
         this.name = name;
         this.closingStart = closingStart;
         this.closingEnd = closingEnd;
+        this.isClosingNeeded = isClosingNeeded;
+        this.fromToClosing = fromToClosing;
+        this.toFromClosing = toFromClosing;
+        this.createdDate = createdDate;
     }
 }

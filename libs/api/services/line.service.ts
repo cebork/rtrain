@@ -3,7 +3,7 @@ import {apiAddress} from "../env-variable";
 import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {IGenericGetAllModelModel} from "../../domain/models/generic-GetAll-Model.model";
-import {ILocalizationModel, ITransportCompanyModel, IUserModel} from "../../domain/models";
+import {IFirmModel, ILocalizationModel, ITransportCompanyModel, IUserModel} from "../../domain/models";
 import {ILineModel} from "../../domain/models/lineModels/line.model";
 
 @Injectable()
@@ -40,4 +40,9 @@ export class LineService {
   getLinesAssociatedWithStation(stationId: string): Observable<HttpResponse<ILineModel[]>> {
     return this.http.get<ILineModel[]>(`${this.baseURL}/getLinesAssociatedWithStation/${stationId}`, {responseType: "json", observe: "response"});
   }
+
+  getRawForDropdown(): Observable<HttpResponse<ILineModel[]>> {
+    return this.http.get<ILineModel[]>(`${this.baseURL}/getRawLines`, {observe: "response", responseType: "json"})
+  }
+
 }

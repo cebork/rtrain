@@ -118,6 +118,7 @@ export class NearIncidentsLocalRoutesComponent implements OnInit {
 
   addEvent() {
     this.incident.localRouteId = this.currentLocalRoute?.id;
+    if (this.incident.fromToClosing || this.incident.toFromClosing) this.incident.isClosingNeeded = true;
     this.incidentService.create(this.incident).subscribe({
       error: (err) => {
         this.messageService.add({severity: "error", summary: "Błąd", detail: "Wystąpił błąd podczas zapisywania"})

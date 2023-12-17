@@ -11,6 +11,7 @@ import {
   StationModel
 } from "@rtrain/domain/models";
 import {NgForm} from "@angular/forms";
+import {markIgnoreDiagnostics} from "@angular/compiler-cli/src/ngtsc/typecheck/src/comments";
 
 @Component({
   selector: 'rtrain-connections-create-view-edit',
@@ -103,7 +104,8 @@ export class ConnectionsCreateViewEditComponent implements OnInit{
         this.router.navigate(['admin/connections']);
       },
       error: (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Błąd', detail: error });
+        console.log(error)
+        this.messageService.add({ severity: 'error', summary: 'Błąd', detail: error.error.message });
         this.router.navigate(['admin/connections']);
       }
     });
@@ -140,6 +142,7 @@ export class ConnectionsCreateViewEditComponent implements OnInit{
   }
 
   addBelow(index: number) {
+    console.log(123)
     this.savedSateBeforeUpdate = JSON.parse(JSON.stringify(this.localRoutes))
     this.editedIndex = index;
     this.isEdited = true;
@@ -167,8 +170,8 @@ export class ConnectionsCreateViewEditComponent implements OnInit{
 
     this.localRoutes[index + 1].fromStationId = this.selectedStationId;
     this.localRoutes[index + 1].fromStation = this.stations.find(s => s.id === this.selectedStationId)
-    const tempDistance = this.localRoutes[this.localRoutes.length - 1].distance
-    if (tempDistance) this.localRoutes[this.localRoutes.length - 1].distance = tempDistance - this.selectedDistance;
+    const tempDistance = this.localRoutes[index + 1].distance
+    if (tempDistance) this.localRoutes[index + 1].distance = tempDistance - this.selectedDistance;
     this.restOfDistanceAvaliable -= this.selectedDistance;
   }
 
@@ -187,7 +190,8 @@ export class ConnectionsCreateViewEditComponent implements OnInit{
   }
 
   addNew(idx: number) {
-    if (this.selectedDistance >= this.restOfDistanceAvaliable || this.selectedDistance <= 0){
+    console.log(this.localRoutes[idx + 1])
+    if (this.selectedDistance >= this.localRoutes[idx + 1].distance! || this.selectedDistance <= 0){
       this.messageService.add({severity: 'warn', summary: 'Uwaga', detail: 'Długość odcinka przekracza dlugość linii'})
     } else if (this.selectedOneWay === undefined) {
       this.messageService.add({severity: 'warn', summary: 'Uwaga', detail: 'Nie ustawiono wartośći dla pola "Czy jeden tor?"'})

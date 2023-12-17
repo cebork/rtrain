@@ -2,6 +2,7 @@ import {IRoleModel} from "../roleModels/role.model";
 import {ITransportCompanyModel} from "../transportCompanyModels/transport-company.model";
 import {IStationModel} from "../stationModels/station.model";
 import {IFirmModel} from "../firmModels/firm.model";
+import {ILineModel} from "../lineModels/line.model";
 
 export interface IAccountModel {
   id?: string;
@@ -19,7 +20,9 @@ export interface IAccountModel {
   stationId?: string;
   station?: IStationModel;
   firmId?: string;
-  firm?: IFirmModel
+  firm?: IFirmModel;
+  lineId?: string;
+  line?: ILineModel;
 }
 
 export class AccountModel implements IAccountModel {
@@ -40,11 +43,14 @@ export class AccountModel implements IAccountModel {
   station?: IStationModel;
   firmId?: string;
   firm?: IFirmModel
+  lineId?: string;
+  line?: ILineModel;
 
-  constructor(id?: string, userName?: string, firstName?: string, lastName?: string, jobPosition?: string,
-              transportCompanyId?: string, email?: string, phoneNumber?: string, emailConfirmed?: boolean,
-              active?: boolean, roles?: IRoleModel[], transportCompany?: ITransportCompanyModel, stationId?: string,
-              station?: IStationModel, firmId?: string, firm?: IFirmModel
+  constructor(
+    id?: string, userName?: string, firstName?: string, lastName?: string, jobPosition?: string,
+    transportCompanyId?: string, email?: string, phoneNumber?: string, emailConfirmed?: boolean, active?: boolean,
+    roles?: IRoleModel[], transportCompany?: ITransportCompanyModel, stationId?: string, station?: IStationModel,
+    firmId?: string, firm?: IFirmModel, lineId?: string, line?: ILineModel
   ) {
     this.id = id;
     this.userName = userName;
@@ -62,5 +68,7 @@ export class AccountModel implements IAccountModel {
     this.station = station;
     this.firmId = firmId;
     this.firm = firm;
+    this.lineId = lineId;
+    this.line = line;
   }
 }

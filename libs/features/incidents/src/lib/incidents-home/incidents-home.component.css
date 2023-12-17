@@ -1,0 +1,7 @@
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+::ng-deep .custom-calendar .ui-datepicker {
+  z-index: 1500 !important;
+}

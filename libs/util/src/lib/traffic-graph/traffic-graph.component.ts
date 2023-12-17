@@ -1,56 +1,142 @@
 import {AfterViewInit, Component, OnInit, Input} from '@angular/core';
 import * as d3 from 'd3';
-import {ISingleLine} from "@rtrain/domain/models";
+import {ISingleLine, IStationNameModel, ITrainScheduleModel} from "@rtrain/domain/models";
+import {IncidentService, RealtimeTrainScheduleService, StationService, TrainScheduleService} from "@rtrain/api";
+import {logging} from "@angular-devkit/core";
+import {ITrainScheduleForTrafficGraph} from "../../../../domain/models/train-schedule/train-schedule-for-traffic-graph";
+import {IIncidentForTrafficGraphModel} from "../../../../domain/models/incidentModels/incident-for-traffic-graph.model";
+import {forkJoin, tap} from "rxjs";
 @Component({
   selector: 'rtrain-traffic-graph',
   templateUrl: './traffic-graph.component.html',
   styleUrls: ['./traffic-graph.component.css'],
 })
-export class TrafficGraphComponent implements OnInit, AfterViewInit{
-  // @Input({required: true}) lineId!: string
-  // @Input() trainSchedules: any[] = []
-  // @Input() trainRealTimeSchedules: any[] = []
-  cities = ['Łuków', 'Krynka', 'Dziewule', 'Radomyśl', 'Siedlce']
+export class TrafficGraphComponent implements OnInit {
+  @Input({required: true}) lineId!: string
+
+  trainSchedules: ITrainScheduleModel[] = [];
+
+  stations: string[] = []
   canvas: any;
 
-  margin = {top: 10, right: 30, bottom: 50, left: 60};
-  width = 630;
-  height = 400;
+  margin = {top: 10, right: 30, bottom: 50, left: 110};
+  width = window.innerWidth - 140;
+  height = window.innerHeight - 60;
 
-  trainSchedulesDisplay = [
-    [
-      {"departureTime": 'T11:10:00', "arrivalTime": 'T11:40:00', "from": 'Łuków', "to": 'Krynka'},
-      {"departureTime": 'T12:20:00', "arrivalTime": 'T12:50:00', "from": 'Krynka', "to": 'Dziewule'},
-      {"departureTime": 'T13:30:00', "arrivalTime": 'T14:00:00', "from": 'Dziewule', "to": 'Radomyśl'},
-      {"departureTime": 'T14:40:00', "arrivalTime": 'T15:10:00', "from": 'Radomyśl', "to": 'Siedlce'},
-      {"departureTime": 'T15:50:00', "arrivalTime": 'T16:20:00', "from": 'Siedlce', "to": 'Siedlce'},
-    ],
-    [
-      {"departureTime": 'T17:10:00', "arrivalTime": 'T17:40:00', "from": 'Łuków', "to": 'Krynka'},
-      {"departureTime": 'T18:20:00', "arrivalTime": 'T18:50:00', "from": 'Krynka', "to": 'Dziewule'},
-      {"departureTime": 'T19:30:00', "arrivalTime": 'T20:00:00', "from": 'Dziewule', "to": 'Radomyśl'},
-      {"departureTime": 'T20:40:00', "arrivalTime": 'T21:10:00', "from": 'Radomyśl', "to": 'Siedlce'},
-      {"departureTime": 'T21:50:00', "arrivalTime": 'T22:20:00', "from": 'Siedlce', "to": 'Siedlce'},
-    ],
-  ];
+  trainSchedulesDisplay: ITrainScheduleForTrafficGraph[][] = [];
+  realtimeTrainScheduleDisplay: ITrainScheduleForTrafficGraph[][] = [];
+  incidentsForTrafficGraph: IIncidentForTrafficGraphModel[] = [];
 
+  constructor(
+    private trainScheduleService: TrainScheduleService,
+    private stationService: StationService,
+    private realtimeTrainScheduleService: RealtimeTrainScheduleService,
+    private incidentService: IncidentService
+  ) {
+  }
 
   ngOnInit(): void {
-    // console.log(this.lineId)
+    this.initDataCascade();
   }
 
-  ngAfterViewInit(): void {
-    this.createCanvas();
-    const x = this.createXAxis()
-    const y = this.createYAxis(this.cities)
-    this.createClipPath();
-    this.createScatter();
-    this.createXGuidelines(x);
-    this.createYGuidelines(y)
-    this.createGraph(x, y);
-    this.initializeZoom(x, y)
-    this.createCurrentTimeLine(x)
+  initDataCascade() {
+    forkJoin({
+      stations: this.loadStations(),
+      trainSchedules: this.loadTrainSchedules(),
+      realTimeTrainSchedules: this.loadRealTimeTrainSchedules(),
+      incidents: this.loadIncidents()
+    }).subscribe({
+      complete: () => this.tryCreateGraph()
+    });
   }
+
+
+  loadStations() {
+    return this.stationService.getStationsForTrafficGraph(this.lineId).pipe(
+      tap((res) => {
+        if (res.body) this.stations = res.body.map((s) => s.name).filter((str): str is string => str !== undefined);
+      })
+    );
+  }
+
+  loadTrainSchedules() {
+    return this.trainScheduleService.getTrainScheduleForTrafficGraph(this.lineId).pipe(
+      tap((res) => {
+        if (res.body) this.trainSchedulesDisplay = res.body;
+      })
+    );
+  }
+
+  loadRealTimeTrainSchedules() {
+    return this.realtimeTrainScheduleService.getRealtimeTrainScheduleForTrafficGraph(this.lineId).pipe(
+      tap((res) => {
+        if (res.body) this.realtimeTrainScheduleDisplay = res.body;
+      })
+    );
+  }
+
+  loadIncidents() {
+    return this.incidentService.getAllIncidentsForTrafficGraph(this.lineId).pipe(
+      tap((res) => {
+        if (res.body) this.incidentsForTrafficGraph = res.body;
+      })
+    );
+  }
+
+  tryCreateGraph(){
+    if (this.stations) {
+      setTimeout(() => {
+        this.createCanvas();
+        const x = this.createXAxis();
+        const y = this.createYAxis(this.stations);
+        this.createClipPath();
+        this.createScatter();
+        this.createXGuidelines(x);
+        this.createYGuidelines(y);
+        this.createGraph(x, y);
+        this.createRealTimeGraph(x, y);
+        this.initializeZoom(x, y);
+        this.createCurrentTimeLine(x);
+        this.createPatterns();
+        this.createRedDashedBox(x, y)
+      });
+    }
+  }
+
+  createRedDashedBox(xAxis: any, yAxis: any) {
+    this.incidentsForTrafficGraph.forEach(iFTG => {
+      const xPosition = xAxis(new Date(iFTG.incidentStart));
+      const xEndPosition = xAxis(new Date(iFTG.incidentEnd));
+      const boxWidth = Math.max(0, xEndPosition - xPosition);
+
+      const yPosition = yAxis(iFTG.toStationName);
+      const yEndPosition = yAxis(iFTG.fromStationName);
+      const boxHeight = Math.max(0, yEndPosition - yPosition);
+
+      let incidentType = ''
+      console.log(iFTG)
+      if (iFTG.incident.fromToClosing === true && iFTG.incident.toFromClosing  === true) incidentType = 'url(#diagonal-hatch-both)'
+      if (iFTG.incident.fromToClosing && !iFTG.incident.toFromClosing) incidentType = 'url(#diagonal-hatch-left-b-right-t)'
+      if (!iFTG.incident.fromToClosing && iFTG.incident.toFromClosing) incidentType = 'url(#diagonal-hatch-left-t-right-b)'
+
+      const group = this.canvas.append("g")
+        .attr('clip-path', 'url(#clip)');
+
+      group.append('rect')
+        .attr("class", "incident-box")
+        .attr('x', xPosition)
+        .attr('y', yPosition)
+        .attr('width', boxWidth)
+        .attr('height', boxHeight)
+        .attr('stroke', 'red')
+        .attr('fill', incidentType)
+        .attr('stroke-width', '2')
+        .attr('clip-path', 'url(#clip)');
+
+    })
+  }
+
+
 
 
   createCanvas() {
@@ -104,6 +190,7 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit{
       .domain( domain)
       .paddingInner(1)
       .range([ this.height , 0 ])
+
 
     this.canvas.append("g")
       .attr("class", "y-axis")
@@ -171,13 +258,17 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit{
 
   createCurrentTimeLine(xScale: d3.ScaleTime<number, number>){
     const currentTime = new Date();
-    this.canvas.append("line")
+
+    const group = this.canvas.append("g")
+      .attr('clip-path', 'url(#clip)');
+
+    group.append("line")
       .attr("class", "current-time-line")
       .attr("x1", xScale(currentTime))
       .attr("y1", 0)
       .attr("x2", xScale(currentTime))
       .attr("y2", this.height)
-      .attr("stroke", "red")
+      .attr("stroke", "yellow")
       .attr("stroke-width", 2);
   }
 
@@ -185,10 +276,10 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit{
     const parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S");
     this.trainSchedulesDisplay.forEach(innerArray => {
       const transformedData = innerArray.map(d => ({
-        arrivalTime: parseTime(new Date().toISOString().split('T')[0] + d.arrivalTime),
-        departureTime: parseTime(new Date().toISOString().split('T')[0] + d.departureTime),
-        from: d.from,
-        to: d.to
+        departureTime: parseTime(new Date().toISOString().split('T')[0] + d.arrivalTime),
+        arrivalTime: parseTime(new Date().toISOString().split('T')[0] + d.departureTime),
+        from: d.station,
+        to: d.station
       })).flatMap(d => [
         { time: d.departureTime, value: d.from },
         { time: d.arrivalTime, value: d.to }
@@ -205,6 +296,36 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit{
         .attr("class", "line-path")
         .attr("fill", "none")
         .attr("stroke", "black")
+        .attr("stroke-width", 2)
+        .attr("d", line)
+        .attr('clip-path', 'url(#clip)');
+    });
+  }
+
+  createRealTimeGraph(xAxis: any, yAxis: any){
+    const parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S");
+    this.realtimeTrainScheduleDisplay.forEach(innerArray => {
+      const transformedData = innerArray.map(d => ({
+        departureTime: parseTime(new Date().toISOString().split('T')[0] + d.arrivalTime),
+        arrivalTime: parseTime(new Date().toISOString().split('T')[0] + d.departureTime),
+        from: d.station,
+        to: d.station
+      })).flatMap(d => [
+        { time: d.departureTime, value: d.from },
+        { time: d.arrivalTime, value: d.to }
+      ]);
+      const line = d3.line<ISingleLine>()
+        .x(d => xAxis(d.time))
+        .y(d => yAxis(d.value));
+
+      const group = this.canvas.append("g")
+        .attr('clip-path', 'url(#clip)');
+
+      group.append("path")
+        .datum(transformedData)
+        .attr("class", "line-path")
+        .attr("fill", "none")
+        .attr("stroke", "lime")
         .attr("stroke-width", 2)
         .attr("d", line)
         .attr('clip-path', 'url(#clip)');
@@ -246,7 +367,7 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit{
   }
 
   update(transform: d3.ZoomTransform, xScale: d3.ScaleTime<number, number>) {
-    console.log(transform)
+    // console.log(transform)
     const newXScale = transform.rescaleX(xScale);
     this.canvas.select('.x-axis').call(d3.axisBottom<Date>(newXScale)
       .ticks(d3.timeMinute.every(15))
@@ -266,12 +387,55 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit{
     this.canvas.select('.current-time-line')
       .attr('x1', newXScale(currentTime))
       .attr('x2', newXScale(currentTime))
-      .attr("stroke", "red")
+      .attr("stroke", "yellow")
       .attr("stroke-width", 2);
 
+    this.canvas.select('.incident-box')
+      .attr('transform', `translate(${transform.x},0) scale(${transform.k},1)`)
 
     this.canvas.selectAll('.x-guide')
       .attr('x1', (d:any) => newXScale(d))
       .attr('x2', (d:any) => newXScale(d));
   }
+
+
+  createPatterns(){
+    //
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-left-b-right-t')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
+      .attr('stroke', 'red')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-left-t-right-b')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2')
+      .attr('stroke', 'red')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-both')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2 M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
+      .attr('stroke', 'red')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+  }
+
 }

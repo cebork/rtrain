@@ -30,7 +30,7 @@
         <tbody>
           <tr class="odd:bg-white even:bg-gray-50 border-b" *ngFor="let trainSchedule of trainSchedules; let idx = index; let first = first; let last = last">
             <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-              {{trainSchedule.order}}
+              {{idx + 1}}
             </td>
             <td  class="px-6 py-4">
               {{trainSchedule.station?.name}}
