@@ -1,18 +1,20 @@
 import {AfterViewInit, Component, OnInit, Input} from '@angular/core';
 import * as d3 from 'd3';
-import {ISingleLine, IStationNameModel, ITrainScheduleModel} from "@rtrain/domain/models";
+import {ISingleLine, IStationNameModel, ITrainScheduleModel, SingleLine} from "@rtrain/domain/models";
 import {IncidentService, RealtimeTrainScheduleService, StationService, TrainScheduleService} from "@rtrain/api";
 import {logging} from "@angular-devkit/core";
 import {ITrainScheduleForTrafficGraph} from "../../../../domain/models/train-schedule/train-schedule-for-traffic-graph";
 import {IIncidentForTrafficGraphModel} from "../../../../domain/models/incidentModels/incident-for-traffic-graph.model";
-import {forkJoin, tap} from "rxjs";
+import {first, forkJoin, tap} from "rxjs";
 @Component({
   selector: 'rtrain-traffic-graph',
   templateUrl: './traffic-graph.component.html',
   styleUrls: ['./traffic-graph.component.css'],
 })
-export class TrafficGraphComponent implements OnInit {
+export class TrafficGraphComponent implements OnInit, AfterViewInit {
   @Input({required: true}) lineId!: string
+
+  tooltip: any;
 
   trainSchedules: ITrainScheduleModel[] = [];
 
@@ -32,11 +34,14 @@ export class TrafficGraphComponent implements OnInit {
     private stationService: StationService,
     private realtimeTrainScheduleService: RealtimeTrainScheduleService,
     private incidentService: IncidentService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.initDataCascade();
+  }
+
+  ngAfterViewInit(): void {
+    this.tooltip = d3.select<HTMLDivElement, unknown>('div#tooltip');
   }
 
   initDataCascade() {
@@ -90,51 +95,21 @@ export class TrafficGraphComponent implements OnInit {
         const x = this.createXAxis();
         const y = this.createYAxis(this.stations);
         this.createClipPath();
-        this.createScatter();
+        this.createPatterns();
+        this.createZoomRect();
         this.createXGuidelines(x);
         this.createYGuidelines(y);
         this.createGraph(x, y);
         this.createRealTimeGraph(x, y);
-        this.initializeZoom(x, y);
         this.createCurrentTimeLine(x);
-        this.createPatterns();
-        this.createRedDashedBox(x, y)
+        this.initializeZoom(x, y);
+        this.createIncidentBox(x, y)
+
       });
     }
   }
 
-  createRedDashedBox(xAxis: any, yAxis: any) {
-    this.incidentsForTrafficGraph.forEach(iFTG => {
-      const xPosition = xAxis(new Date(iFTG.incidentStart));
-      const xEndPosition = xAxis(new Date(iFTG.incidentEnd));
-      const boxWidth = Math.max(0, xEndPosition - xPosition);
 
-      const yPosition = yAxis(iFTG.toStationName);
-      const yEndPosition = yAxis(iFTG.fromStationName);
-      const boxHeight = Math.max(0, yEndPosition - yPosition);
-
-      let incidentType = ''
-      console.log(iFTG)
-      if (iFTG.incident.fromToClosing === true && iFTG.incident.toFromClosing  === true) incidentType = 'url(#diagonal-hatch-both)'
-      if (iFTG.incident.fromToClosing && !iFTG.incident.toFromClosing) incidentType = 'url(#diagonal-hatch-left-b-right-t)'
-      if (!iFTG.incident.fromToClosing && iFTG.incident.toFromClosing) incidentType = 'url(#diagonal-hatch-left-t-right-b)'
-
-      const group = this.canvas.append("g")
-        .attr('clip-path', 'url(#clip)');
-
-      group.append('rect')
-        .attr("class", "incident-box")
-        .attr('x', xPosition)
-        .attr('y', yPosition)
-        .attr('width', boxWidth)
-        .attr('height', boxHeight)
-        .attr('stroke', 'red')
-        .attr('fill', incidentType)
-        .attr('stroke-width', '2')
-        .attr('clip-path', 'url(#clip)');
-
-    })
-  }
 
 
 
@@ -145,9 +120,8 @@ export class TrafficGraphComponent implements OnInit {
       .style("color", "white")
       .attr("width", this.width + this.margin.left + this.margin.right)
       .attr("height", this.height + this.margin.top + this.margin.bottom)
-    .append("g")
+      .append("g")
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")
-      // .attr('clip-path', 'url(#clip)');
 
   }
 
@@ -158,7 +132,7 @@ export class TrafficGraphComponent implements OnInit {
 
     const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
     const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 1)
+    endDate.setDate(startDate.getDate() + 2)
     startDate.setDate(startDate.getDate() - 1)
     const xScale = d3.scaleTime()
       .domain([startDate, endDate])
@@ -171,7 +145,6 @@ export class TrafficGraphComponent implements OnInit {
     this.canvas.append("g")
       .attr("class", "x-axis")
       .attr("transform", `translate(0,${this.height})`)
-
       .call(xAxis);
 
     this.canvas.selectAll(".x-axis text")
@@ -211,11 +184,6 @@ export class TrafficGraphComponent implements OnInit {
 
   }
 
-  createScatter(){
-    this.canvas.append("g")
-      .attr("clip-path", "url(#clip)")
-  }
-
   createXGuidelines(xScale: d3.ScaleTime<number, number>) {
 
     const hourlyInterval = d3.timeHour.every(1);
@@ -223,9 +191,7 @@ export class TrafficGraphComponent implements OnInit {
       throw new Error("Invalid interval");
     }
 
-
     const xAxisTicks = xScale.ticks(hourlyInterval);
-
     this.canvas.selectAll('.x-guide')
       .data(xAxisTicks)
       .enter().append('line')
@@ -275,44 +241,37 @@ export class TrafficGraphComponent implements OnInit {
   createGraph(xAxis: any, yAxis: any) {
     const parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S");
     this.trainSchedulesDisplay.forEach(innerArray => {
-      const transformedData = innerArray.map(d => ({
-        departureTime: parseTime(new Date().toISOString().split('T')[0] + d.arrivalTime),
-        arrivalTime: parseTime(new Date().toISOString().split('T')[0] + d.departureTime),
-        from: d.station,
-        to: d.station
-      })).flatMap(d => [
-        { time: d.departureTime, value: d.from },
-        { time: d.arrivalTime, value: d.to }
+      const transformedData = innerArray.flatMap(schedule => [
+        new SingleLine(parseTime(new Date().toISOString().split('T')[0] + schedule.arrivalTime), schedule.station, schedule.train),
+        new SingleLine(parseTime(new Date().toISOString().split('T')[0] + schedule.departureTime), schedule.station, schedule.train)
       ]);
       const line = d3.line<ISingleLine>()
         .x(d => xAxis(d.time))
         .y(d => yAxis(d.value));
 
-      const group = this.canvas.append("g")
-        .attr('clip-path', 'url(#clip)');
-
-      group.append("path")
+      // Create a group and append a path for each schedule
+      this.canvas.append("g")
+        .attr('clip-path', 'url(#clip)')
+        .append("path")
         .datum(transformedData)
         .attr("class", "line-path")
         .attr("fill", "none")
         .attr("stroke", "black")
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 1)
         .attr("d", line)
-        .attr('clip-path', 'url(#clip)');
+        .style('pointer-events', 'visiblePainted')
+        .on("mouseover", this.handleMouseOverTS.bind(this))
+        .on("mousemove", this.handleMouseMoveTS.bind(this))
+        .on("mouseout", this.handleMouseOutTS.bind(this));
     });
   }
 
   createRealTimeGraph(xAxis: any, yAxis: any){
     const parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S");
     this.realtimeTrainScheduleDisplay.forEach(innerArray => {
-      const transformedData = innerArray.map(d => ({
-        departureTime: parseTime(new Date().toISOString().split('T')[0] + d.arrivalTime),
-        arrivalTime: parseTime(new Date().toISOString().split('T')[0] + d.departureTime),
-        from: d.station,
-        to: d.station
-      })).flatMap(d => [
-        { time: d.departureTime, value: d.from },
-        { time: d.arrivalTime, value: d.to }
+      const transformedData = innerArray.flatMap(schedule => [
+        new SingleLine(parseTime(new Date().toISOString().split('T')[0] + schedule.arrivalTime), schedule.station, schedule.train),
+        new SingleLine(parseTime(new Date().toISOString().split('T')[0] + schedule.departureTime), schedule.station, schedule.train)
       ]);
       const line = d3.line<ISingleLine>()
         .x(d => xAxis(d.time))
@@ -326,13 +285,70 @@ export class TrafficGraphComponent implements OnInit {
         .attr("class", "line-path")
         .attr("fill", "none")
         .attr("stroke", "lime")
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 1)
         .attr("d", line)
-        .attr('clip-path', 'url(#clip)');
+        .attr('clip-path', 'url(#clip)')
+        .on("mouseover", this.handleMouseOverRTS.bind(this))
+        .on("mousemove", this.handleMouseMoveRTS.bind(this))
+        .on("mouseout", this.handleMouseOutRTS.bind(this));
     });
   }
 
+  createIncidentBox(xAxis: any, yAxis: any) {
+    this.incidentsForTrafficGraph.forEach(iFTG => {
+      const xPosition = xAxis(new Date(iFTG.incidentStart));
+      const xEndPosition = xAxis(new Date(iFTG.incidentEnd));
+      const boxWidth = Math.max(0, xEndPosition - xPosition);
+
+      const yPosition = yAxis(iFTG.toStationName);
+      const yEndPosition = yAxis(iFTG.fromStationName);
+      const boxHeight = Math.max(0, yEndPosition - yPosition);
+
+      let incidentType = ''
+      if (iFTG.incident.fromToClosing === true && iFTG.incident.toFromClosing  === true) incidentType = 'url(#diagonal-hatch-both)'
+      if (iFTG.incident.fromToClosing && !iFTG.incident.toFromClosing) incidentType = 'url(#diagonal-hatch-left-b-right-t)'
+      if (!iFTG.incident.fromToClosing && iFTG.incident.toFromClosing) incidentType = 'url(#diagonal-hatch-left-t-right-b)'
+
+      const group = this.canvas.append("g")
+        .attr('clip-path', 'url(#clip)');
+
+      group.append('rect')
+        .datum(iFTG)
+        .attr("class", "incident-box")
+        .attr('x', xPosition)
+        .attr('y', yPosition)
+        .attr('width', boxWidth)
+        .attr('height', boxHeight)
+        .attr('stroke', 'red')
+        .attr('fill', incidentType)
+        .attr('stroke-width', '2')
+        .attr('clip-path', 'url(#clip)')
+        .on("mouseover", this.handleMouseOverI.bind(this))
+        .on("mousemove", this.handleMouseMoveI.bind(this))
+        .on("mouseout", this.handleMouseOutI.bind(this));
+
+    })
+  }
+
   private initializeZoom(xScale: d3.ScaleTime<number, number>, yScale: d3.ScaleBand<string>): void {
+    const initScale = 4
+    const currentDate = new Date();
+    const currentHourDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours());
+    const currentHourDate2 = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours());
+
+
+    const xOffset = xScale(currentHourDate);
+    const initialTransform = d3.zoomIdentity.translate(xOffset, 0).scale(initScale);
+
+    const newXScale = initialTransform.rescaleX(xScale);
+    const endOfx = newXScale(currentHourDate2.setDate(currentHourDate2.getDate() + 1))
+    const tempXOffset = newXScale(currentHourDate);
+    const correctXOffset = (tempXOffset - (endOfx - tempXOffset)) * -1
+
+    const correctTransform = d3.zoomIdentity.translate(correctXOffset, 0).scale(initScale);
+
+    let first = 0;
+
     const zoomBehavior = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([4, 20]) // Keep your scale extent starting at 4
       .translateExtent([[0, 0], [this.width, this.height]]) // Set translate extent to restrict panning
@@ -341,44 +357,41 @@ export class TrafficGraphComponent implements OnInit {
         if (event.transform.k < 4) {
           event.transform.k = 4;
         }
-        this.update(event.transform, xScale);
+        if (first === 1) {
+          first = 2;
+          event.transform.x = correctTransform;
+
+        }
+        if (first === 0) first++;
+        // const newXScale = event.transform.rescaleX(xScale)
+        if (event.transform.x < 50) this.update(event.transform, xScale);
       });
 
-    this.canvas.append('rect')
-      .attr('width', this.width)
-      .attr('height', this.height)
-      .style('fill', 'none')
-      .style('pointer-events', 'all')
-      .call(zoomBehavior);
 
-    const initialScale = 4.0; // Set your desired initial scale
-    // const initialTranslate = [
-    //   -initialScale * this.margin.left,
-    //   -initialScale * this.margin.top
-    // ];
-    const initialTransform = d3.zoomIdentity
-      .translate(0,0)
-      .scale(initialScale);
-    this.canvas.call(zoomBehavior.transform, initialTransform);
+    this.canvas.call(zoomBehavior.transform, correctXOffset);
 
-    this.update(initialTransform, xScale);
+    this.update(correctTransform, xScale);
 
+    this.canvas.select('.zoom-rect').call(zoomBehavior);
 
   }
 
   update(transform: d3.ZoomTransform, xScale: d3.ScaleTime<number, number>) {
-    // console.log(transform)
+
+
     const newXScale = transform.rescaleX(xScale);
+
     this.canvas.select('.x-axis').call(d3.axisBottom<Date>(newXScale)
       .ticks(d3.timeMinute.every(15))
       .tickFormat(d3.timeFormat("%H:%M")));
+
 
     this.canvas.selectAll(".x-axis text")
       .attr("transform", "rotate(45)")
       .attr("text-anchor", "start")
       .attr("dy", "-1em")
       .style("font-size", "12px")
-      .attr("dx", "2em");
+      .attr("dx", "2em")
 
     this.canvas.selectAll('.line-path')
       .attr('transform', `translate(${transform.x},0) scale(${transform.k},1)`)
@@ -436,6 +449,235 @@ export class TrafficGraphComponent implements OnInit {
       .attr('stroke', 'red')
       .attr('stroke-width', 2)
       .attr('stroke-linecap', 'square');
+
+
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-left-b-right-t-hover')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
+      .attr('stroke', 'blue')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-left-t-right-b-hover')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2')
+      .attr('stroke', 'blue')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-both-hover')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2 M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
+      .attr('stroke', 'blue')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+
   }
+
+
+
+  createZoomRect(){
+    this.canvas.append('rect')
+      .attr('class', 'zoom-rect')
+      .attr('width', this.width)
+      .attr('height', this.height)
+      .style('fill', 'none')
+      .style('pointer-events', 'all')
+  }
+
+
+  handleMouseOverTS = (event: any, d: any) => {
+    try {
+      d3.select(event.currentTarget)
+        .attr("stroke", "blue")
+      this.tooltip
+        .style("visibility", "visible")
+        .style("opacity", 1)
+        .html(`
+            <b>Pociąg:</b>
+            <br>Ze stacji: ${d[0].value}
+            <br>Do stacji: ${d[d.length - 1].value}
+            <br>Nazwa: ${d[0].train.name}
+            <br>Kod: ${d[0].train.code}
+            <br>Przeoźnik: ${d[0].train.transportCompany.name} (${d[0].train.transportCompany.symbol})
+            <br>Typ: ${d[0].train.trainType.name} (${d[0].train.trainType.symbol})
+          `);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  handleMouseMoveTS = (event: any, d: any) => {
+    this.tooltip
+      .style("left", (event.pageX + 10) + "px")
+      .style("top", (event.pageY + 10) + "px")
+      .html(`
+            <b>Pociąg:</b>
+            <br>Ze stacji: ${d[0].value}
+            <br>Do stacji: ${d[d.length - 1].value}
+            <br>Nazwa: ${d[0].train.name}
+            <br>Kod: ${d[0].train.code}
+            <br>Przewoźnik: ${d[0].train.transportCompany.name} (${d[0].train.transportCompany.symbol})
+            <br>Typ: ${d[0].train.trainType.name} (${d[0].train.trainType.symbol})
+          `);
+  }
+
+  handleMouseOutTS = (event: any, d: any) => {
+    try {
+      d3.select(event.currentTarget)
+        .attr("stroke", "black")
+        .attr("stroke-width", 1);
+
+      this.tooltip
+        .style("visibility", "hidden")
+        .style("opacity", 0);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  handleMouseOverRTS = (event: any, d: any) => {
+    try {
+      d3.select(event.currentTarget)
+        .attr("stroke", "blue")
+      this.tooltip
+        .style("visibility", "visible")
+        .style("opacity", 1)
+        .html(`
+            <b>Pociąg:</b>
+            <br>Nazwa: ${d[0].train.name}
+          `);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  handleMouseMoveRTS = (event: any, d: any) => {
+    this.tooltip
+      .style("left", (event.pageX + 10) + "px")
+      .style("top", (event.pageY + 10) + "px")
+      .html(`
+            <b>Pociąg:</b>
+            <br>Ze stacji: ${d[0].value}
+            <br>Do stacji: ${d[d.length - 1].value}
+          `);
+  }
+
+  handleMouseOutRTS = (event: any, d: any) => {
+    try {
+      d3.select(event.currentTarget)
+        .attr("stroke", "lime")
+        .attr("stroke-width", 1);
+
+      this.tooltip
+        .style("visibility", "hidden")
+        .style("opacity", 0);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  handleMouseOverI = (event: any, d: any) => {
+    try {
+      let incidentType = ''
+      let closingDirection = ''
+      if (d.incident.fromToClosing === true && d.incident.toFromClosing  === true) {
+        incidentType = 'url(#diagonal-hatch-both-hover)'
+        closingDirection = 'oba kierunki'
+      }
+      if (d.incident.fromToClosing && !d.incident.toFromClosing) {
+        incidentType = 'url(#diagonal-hatch-left-b-right-t-hover)'
+        closingDirection = 'z początkowej do końcowej'
+      }
+      if (!d.incident.fromToClosing && d.incident.toFromClosing) {
+        incidentType = 'url(#diagonal-hatch-left-t-right-b-hover)'
+        closingDirection = 'z końcowej do początkowej'
+      }
+      console.log(d)
+      d3.select(event.currentTarget)
+        .attr("stroke", "blue")
+        .attr('fill', incidentType)
+      this.tooltip
+        .style("visibility", "visible")
+        .style("opacity", 1)
+        .html(`
+            <b>Incydent na odcinku ${d.fromStationName} - ${d.fromStationName}</b>
+            <br>Kierunek blokady: ${closingDirection}
+            <br>Data początkowa: ${d.incidentStart}
+            <br>Data końcowa: ${d.incidentEnd}
+            <br>Kod incydentu: ${d.incident.incidentCode.name}
+            <br>Nazwa incydentu: ${d.incident.incidentCode.description}
+          `);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  handleMouseMoveI = (event: any, d: any) => {
+    let incidentType = ''
+    let closingDirection = ''
+    if (d.incident.fromToClosing === true && d.incident.toFromClosing  === true) {
+      incidentType = 'url(#diagonal-hatch-both-hover)'
+      closingDirection = 'oba kierunki'
+    }
+    if (d.incident.fromToClosing && !d.incident.toFromClosing) {
+      incidentType = 'url(#diagonal-hatch-left-b-right-t-hover)'
+      closingDirection = 'z początkowej do końcowej'
+    }
+    if (!d.incident.fromToClosing && d.incident.toFromClosing) {
+      incidentType = 'url(#diagonal-hatch-left-t-right-b-hover)'
+      closingDirection = 'z końcowej do początkowej'
+    }
+
+    this.tooltip
+      .style("left", (event.pageX + 10) + "px")
+      .style("top", (event.pageY + 10) + "px")
+      .html(`
+            <b>Incydent na odcinku ${d.fromStationName} - ${d.fromStationName}</b>
+            <br>Kierunek blokady: ${closingDirection}
+            <br>Data początkowa: ${d.incidentStart}
+            <br>Data końcowa: ${d.incidentEnd}
+            <br>Kod incydentu: ${d.incident.incidentCode.name}
+            <br>Nazwa incydentu: ${d.incident.incidentCode.description}
+          `);
+  }
+
+  handleMouseOutI = (event: any, d: any) => {
+    try {
+      let incidentType = ''
+      if (d.incident.fromToClosing === true && d.incident.toFromClosing  === true) incidentType = 'url(#diagonal-hatch-both)'
+      if (d.incident.fromToClosing && !d.incident.toFromClosing) incidentType = 'url(#diagonal-hatch-left-b-right-t)'
+      if (!d.incident.fromToClosing && d.incident.toFromClosing) incidentType = 'url(#diagonal-hatch-left-t-right-b)'
+      d3.select(event.currentTarget)
+        .attr("stroke", "red")
+        .attr('fill', incidentType)
+
+      this.tooltip
+        .style("visibility", "hidden")
+        .style("opacity", 0);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
 }
