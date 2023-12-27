@@ -8,6 +8,7 @@ import {AuthState, getAccount} from "@rtrain/shell/auth";
 import {Observable} from "rxjs";
 import {RoleConstant} from "@rtrain/util";
 import {HttpResponse} from "@microsoft/signalr";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'rtrain-incidents-home',
@@ -42,7 +43,8 @@ export class IncidentsHomeComponent implements OnInit {
     private messageService: MessageService,
     private store: Store<AuthState>,
     private accessService: AccessService,
-    private incidentCodeService: IncidentCodeService
+    private incidentCodeService: IncidentCodeService,
+    private router: Router
   ) {
     this.account$ = this.store.select(getAccount);
     this.account$.subscribe(acc => {
@@ -124,12 +126,17 @@ export class IncidentsHomeComponent implements OnInit {
   }
 
   openModalWindow(incident: IIncidentModel) {
-    this.showModal = true;
-    this.currentIncident = incident;
-    if (this.currentIncident) {
-      if (this.currentIncident.closingStart) this.currentIncident.closingStart = new Date(this.currentIncident.closingStart)
-      if (this.currentIncident.closingEnd) this.currentIncident.closingEnd = new Date(this.currentIncident.closingEnd)
+    if (!this.isLineDispatcher){
+      this.showModal = true;
+      this.currentIncident = incident;
+      if (this.currentIncident) {
+        if (this.currentIncident.closingStart) this.currentIncident.closingStart = new Date(this.currentIncident.closingStart)
+        if (this.currentIncident.closingEnd) this.currentIncident.closingEnd = new Date(this.currentIncident.closingEnd)
+      }
+    }else {
+      this.router.navigate(['incident-train-view/' + incident.id])
     }
+
   }
 
   save() {

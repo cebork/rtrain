@@ -9,7 +9,8 @@ export enum AuthActionTypes {
   SessionRenewed = "[Auth API] Session Renewed",
   LoginSuccess = "[Auth API] Login Success",
   LoginFail = "[Auth API] Login Fail",
-  SetLoading = "[Auth API] Set Loading"
+  SetLoading = "[Auth API] Set Loading",
+  UpdateAccount = "[Auth API] Update Account"
 }
 
 export class Login implements Action {
@@ -54,4 +55,10 @@ export class SetLoading implements Action {
   constructor(public payload: boolean) {}
 }
 
-export type AuthAction = Login | Logout | GetAccount | StoreAccount | LoginFail | LoginSuccess | SessionRenewed | SetLoading;
+export class UpdateAccount implements Action {
+  readonly type = AuthActionTypes.UpdateAccount;
+
+  constructor(public payload: AccountModel) {}
+}
+
+export type AuthAction = Login | Logout | GetAccount | StoreAccount | LoginFail | LoginSuccess | SessionRenewed | SetLoading | UpdateAccount;

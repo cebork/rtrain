@@ -13,7 +13,6 @@ export interface ITrainModel {
   transportCompany?: ITransportCompanyModel;
   trainTypeId?: string;
   trainType?: ITrainTypeModel;
-
 }
 
 export class TrainModel implements ITrainModel{

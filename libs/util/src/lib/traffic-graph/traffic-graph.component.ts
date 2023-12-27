@@ -1,7 +1,13 @@
-import {AfterViewInit, Component, OnInit, Input} from '@angular/core';
+import {AfterViewInit, Component, OnInit, Input, OnDestroy} from '@angular/core';
 import * as d3 from 'd3';
 import {ISingleLine, IStationNameModel, ITrainScheduleModel, SingleLine} from "@rtrain/domain/models";
-import {IncidentService, RealtimeTrainScheduleService, StationService, TrainScheduleService} from "@rtrain/api";
+import {
+  IncidentService,
+  RealtimeTrainScheduleService,
+  SignalRService,
+  StationService,
+  TrainScheduleService
+} from "@rtrain/api";
 import {logging} from "@angular-devkit/core";
 import {ITrainScheduleForTrafficGraph} from "../../../../domain/models/train-schedule/train-schedule-for-traffic-graph";
 import {IIncidentForTrafficGraphModel} from "../../../../domain/models/incidentModels/incident-for-traffic-graph.model";
@@ -11,7 +17,7 @@ import {first, forkJoin, tap} from "rxjs";
   templateUrl: './traffic-graph.component.html',
   styleUrls: ['./traffic-graph.component.css'],
 })
-export class TrafficGraphComponent implements OnInit, AfterViewInit {
+export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input({required: true}) lineId!: string
 
   tooltip: any;
@@ -33,15 +39,23 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit {
     private trainScheduleService: TrainScheduleService,
     private stationService: StationService,
     private realtimeTrainScheduleService: RealtimeTrainScheduleService,
-    private incidentService: IncidentService
+    private incidentService: IncidentService,
+    private signalRService: SignalRService
   ) {}
 
   ngOnInit(): void {
+    this.signalRService.startConnection();
     this.initDataCascade();
+
   }
+
 
   ngAfterViewInit(): void {
     this.tooltip = d3.select<HTMLDivElement, unknown>('div#tooltip');
+  }
+
+  ngOnDestroy() {
+    this.signalRService.disconnect();
   }
 
   initDataCascade() {
@@ -94,6 +108,8 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit {
         this.createCanvas();
         const x = this.createXAxis();
         const y = this.createYAxis(this.stations);
+        this.listenToIncidentChanges(x, y)
+        this.listenToRealtimeTrainScheduleChanges(x, y)
         this.createClipPath();
         this.createPatterns();
         this.createZoomRect();
@@ -110,7 +126,21 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit {
   }
 
 
+  listenToIncidentChanges(xAxis: any, yAxis: any){
+    this.signalRService.addIncidentsListener().subscribe((data) => {
+      if (data) this.incidentsForTrafficGraph = data;
+      console.log(data)
+      this.createIncidentBox(xAxis, yAxis)
+    })
+  }
 
+  listenToRealtimeTrainScheduleChanges(xAxis: any, yAxis: any){
+    this.signalRService.addRealTimeTrainScheduleListener().subscribe((data) => {
+      if (data) this.realtimeTrainScheduleDisplay = data;
+      console.log(data)
+      this.createRealTimeGraph(xAxis, yAxis)
+    })
+  }
 
 
 
@@ -267,6 +297,7 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit {
   }
 
   createRealTimeGraph(xAxis: any, yAxis: any){
+    this.removeElementsByClass("line-path-realtime")
     const parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S");
     this.realtimeTrainScheduleDisplay.forEach(innerArray => {
       const transformedData = innerArray.flatMap(schedule => [
@@ -282,7 +313,7 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit {
 
       group.append("path")
         .datum(transformedData)
-        .attr("class", "line-path")
+        .attr("class", "line-path-realtime")
         .attr("fill", "none")
         .attr("stroke", "lime")
         .attr("stroke-width", 1)
@@ -295,6 +326,7 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit {
   }
 
   createIncidentBox(xAxis: any, yAxis: any) {
+    this.removeElementsByClass("incident-box")
     this.incidentsForTrafficGraph.forEach(iFTG => {
       const xPosition = xAxis(new Date(iFTG.incidentStart));
       const xEndPosition = xAxis(new Date(iFTG.incidentEnd));
@@ -328,6 +360,20 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit {
         .on("mouseout", this.handleMouseOutI.bind(this));
 
     })
+  }
+
+  removeElementsByClass(className: string) {
+    const elements = document.getElementsByClassName(className);
+    const elementsArray = Array.from(elements);
+    if (elementsArray.length > 0) {
+      for (let i = 0; i < elementsArray.length; i++) {
+        const element = elementsArray[i];
+        if (element && element.parentNode) {
+          element.parentNode.removeChild(element);
+        }
+      }
+    }
+
   }
 
   private initializeZoom(xScale: d3.ScaleTime<number, number>, yScale: d3.ScaleBand<string>): void {
@@ -394,6 +440,9 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit {
       .attr("dx", "2em")
 
     this.canvas.selectAll('.line-path')
+      .attr('transform', `translate(${transform.x},0) scale(${transform.k},1)`)
+
+    this.canvas.selectAll('.line-path-realtime')
       .attr('transform', `translate(${transform.x},0) scale(${transform.k},1)`)
 
     const currentTime = new Date();
@@ -611,7 +660,6 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit {
         incidentType = 'url(#diagonal-hatch-left-t-right-b-hover)'
         closingDirection = 'z końcowej do początkowej'
       }
-      console.log(d)
       d3.select(event.currentTarget)
         .attr("stroke", "blue")
         .attr('fill', incidentType)

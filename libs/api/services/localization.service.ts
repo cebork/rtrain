@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {apiAddress} from "../env-variable";
 import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {IGenericGetAllModelModel} from "../../domain/models/generic-GetAll-Model.model";
+import {IGenericGetAllModelModel} from "../../domain/models";
 import {ILocalizationModel, ITransportCompanyModel, IUserModel} from "../../domain/models";
 
 @Injectable()

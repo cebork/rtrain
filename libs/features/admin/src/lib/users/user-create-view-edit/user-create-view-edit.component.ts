@@ -7,6 +7,7 @@ import {NgForm} from "@angular/forms";
 import {MessageService} from "primeng/api";
 import {IRoleModel} from "@rtrain/domain/models";
 import {HttpErrorResponse, HttpStatusCode} from "@angular/common/http";
+import {RoleConstant} from "@rtrain/util";
 
 @Component({
   selector: 'rtrain-user-create-view-edit',
@@ -177,4 +178,22 @@ export class UserCreateViewEditComponent implements OnInit {
     })
   }
 
+  translateRoleName(name: string | undefined): string {
+    switch (name){
+      case RoleConstant.LineDispatcher:
+        return "Dyspozytor liniowy"
+      case RoleConstant.TransportCompanyWorker:
+        return "Pracownik przewoźnika"
+      case RoleConstant.TrainScheduleDispatcher:
+        return "Dyspozytor tworzący rozkłady jazdy"
+      case RoleConstant.Admin:
+        return "Administrator"
+      case RoleConstant.ContributorDispatcher:
+        return "Dyspozytor zakładowy"
+      case RoleConstant.TrafficDispatcher:
+        return "Dyżurny ruchu"
+      default:
+        return ""
+    }
+  }
 }

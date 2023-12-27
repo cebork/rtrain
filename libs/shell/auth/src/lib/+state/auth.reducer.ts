@@ -50,6 +50,10 @@ export function authReducer(state = initialState, action: AuthAction): AuthData 
       return { ...state, account: action.payload}
     }
 
+    case AuthActionTypes.UpdateAccount: {
+      return { ...state, account: action.payload}
+    }
+
     default:
       return state;
   }

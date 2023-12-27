@@ -1,9 +1,17 @@
 import {Injectable} from "@angular/core";
 import {apiAddress} from "../env-variable";
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {AccountModel, IAccountModel, ILineModel, ILoginModel, JWTToken} from "../../domain/models";
+import {
+  AccountModel,
+  IAccountModel,
+  ILineModel,
+  ILoginModel,
+  IUserProfileEditDTOModel,
+  JWTToken
+} from "../../domain/models";
 import {BehaviorSubject, catchError, map, Observable, tap, throwError} from "rxjs";
 import {IActivateAccountModel} from "../../domain/models/accountModels/activateAccount.model";
+import {IResetPasswordDTOModel} from "../../domain/models/accountModels/resetPasswordDTO.model";
 
 
 @Injectable()
@@ -55,4 +63,19 @@ export class AccountService {
     return this.http.patch<boolean>(`${this.baseURL}`, activateAccountModel, {observe: "response", responseType: "json"})
   }
 
+  requestPasswordReset(login: any) {
+
+  }
+
+  updateImage(formData: FormData, userId: string): Observable<HttpResponse<void>> {
+    return this.http.patch<void>(`${this.baseURL}/UpdateImage/${userId}`, formData, {observe: "response", responseType: "json"})
+  }
+
+  updateAccountData(userObjectToSave: IUserProfileEditDTOModel | undefined): Observable<HttpResponse<IUserProfileEditDTOModel>> {
+    return this.http.patch(`${this.baseURL}/UpdateUserData`, userObjectToSave, {observe: "response", responseType: "json"})
+  }
+
+  changePassword(passwordChangeModel: IResetPasswordDTOModel | undefined, userId: string): Observable<HttpResponse<void>> {
+    return this.http.patch<void>(`${this.baseURL}/ChangePassword/${userId}`, passwordChangeModel, {observe: "response", responseType: "json"});
+  }
 }

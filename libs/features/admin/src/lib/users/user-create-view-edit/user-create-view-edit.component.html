@@ -63,7 +63,7 @@
       <div class="flex flex-row w-full">Role: </div>
       <div *ngFor="let role of roles" class="flex flex-row items-center me-8 ">
         <input (click)="selectingRoles(role)" id="inline-checkbox" type="checkbox" [checked]="checkIfUserContainsRole(role.name!)" [disabled]="isView" [value]="role" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
-        <label for="inline-checkbox" class="ms-2 text-sm font-medium text-gray-900">{{role.name}}</label>
+        <label for="inline-checkbox" class="ms-2 text-sm font-medium text-gray-900">{{translateRoleName(role.name)}}</label>
       </div>
     </div>
     <button  type="submit"  [disabled]="!formRef.valid" *ngIf="!isView" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>

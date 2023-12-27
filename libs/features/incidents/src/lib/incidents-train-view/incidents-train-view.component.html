@@ -1,0 +1,138 @@
+<div class="flex flex-col">
+  <div class="flex flex-row items-center m-10 px-5">
+    <h3 class="text-2xl font-semibold"><fa-icon class="fa-solid fa-building"></fa-icon>&nbsp; Pociągi dla incydentu - {{incident?.name}}</h3>
+    <div class=" ml-auto">
+    </div>
+  </div>
+  <div class="flex flex-row m-auto">
+    <div class="card">
+
+      <p-table #dt1 [value]="trainsForSchedule" [lazy]="true" (onLazyLoad)="loadTrains($event)"
+               [paginator]="true" [rows]="10" [totalRecords]="totalRecords"
+               [loading]="loading" [sortField]="defaultSortField" [sortOrder]="defaultSortOrder">
+        <ng-template pTemplate="caption">
+          <div class="flex">
+            <button type="button"  (click)="clear(dt1, filterInput)" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+              <i class="pi pi-filter-slash"></i> Wyczyść filtry
+            </button>
+            <span class="flex items-center ml-auto">
+              <i class="pi pi-search"></i>
+              <input #filterInput type="text" (input)="filter($event.target, dt1)" placeholder="Wyszukaj" class="pl-2"/>
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="train.name" style="min-width:10rem">
+              <div class="flex items-center justify-start">
+                <p>Nazwa</p>
+                <p-sortIcon field="train.name"></p-sortIcon>
+              </div>
+
+            </th>
+            <th pSortableColumn="train.code" style="min-width:10rem">
+              <div class="flex items-center justify-start">
+                <p>Kod</p>
+                <p-sortIcon field="train.name"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="train.trainType.name" style="min-width:7rem">
+              <div class="flex items-center justify-start">
+                <p>Typ</p>
+                <p-sortIcon field="train.trainType.name"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="fromStation.name" style="min-width:12rem">
+              <div class="flex items-center justify-start">
+                <p>Ze stacji</p>
+                <p-sortIcon field="fromStation.name"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="toStation.name" style="min-width:12rem">
+              <div class="flex items-center justify-start">
+                <p>Do stacji</p>
+                <p-sortIcon field="toStation.name"></p-sortIcon>
+              </div>
+            </th>
+            <th style="min-width:10rem">
+              <div class="flex justify-content-center align-items-center">
+                Akcje
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-trainForSchedule>
+          <tr>
+            <td>
+              {{trainForSchedule?.train?.name}}
+            </td>
+            <td>
+              {{trainForSchedule?.train?.code}}
+            </td>
+            <td>
+              {{trainForSchedule?.train?.trainType?.name}}
+            </td>
+            <td>
+              {{trainForSchedule?.fromStation?.name}}
+            </td>
+            <td>
+              {{trainForSchedule?.toStation?.name}}
+            </td>
+            <td>
+              <button (click)="openDialog(trainForSchedule)" type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">Dodaj opis</button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">No incidents found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<p-dialog header="Pociąg - {{currentTrain?.train?.name}}" [(visible)]="showModal" [style]="{width: '50vw'}" [resizable]="false" [modal]="true" [dismissableMask]="true">
+  <form #formRef="ngForm" (submit)="save()" class="flex flex-col w-full">
+
+    <div class="relative z-10 w-full mb-6 group mt-4">
+      <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Opis opóźnienia</label>
+      <textarea id="description" [(ngModel)]="delayDescription" name="delayDescription" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Dodaj opis opóźnienia..." required></textarea>
+    </div>
+    <button [disabled]="!formRef.valid" type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><i class="fa-solid fa-check"></i> Zapisz</button>
+  </form>
+
+  <div class="flex flex-col w-full relative  shadow-md sm:rounded-lg my-5">
+    <table class=" text-sm text-left rtl:text-right text-gray-500">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3">
+          Lp.
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Odcinek
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Opis
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="odd:bg-white even:bg-gray-50 border-b" *ngFor="let delayDescriptionModel of delayDescriptions; let idx = index; let first = first; let last = last">
+        <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+          {{idx + 1}}
+        </td>
+        <td class="px-6 py-4">
+          {{delayDescriptionModel?.incident?.localRoute?.fromStation?.name }} - {{delayDescriptionModel?.incident?.localRoute?.toStation?.name }}
+        </td>
+        <td class="px-6 py-4">
+          {{delayDescriptionModel?.description}}
+
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</p-dialog>

@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {apiAddress} from "../env-variable";
 import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {IGenericGetAllModelModel, ITrainModel} from "../../domain/models";
+import {IGenericGetAllModelModel, ITrainForScheduleModel, ITrainModel} from "../../domain/models";
 
 @Injectable()
 export class TrainService {
@@ -38,5 +38,14 @@ export class TrainService {
   getTrainsForCurrentUserTransportCompany(): Observable<HttpResponse<IGenericGetAllModelModel<ITrainModel>>>{
     return this.http.get<IGenericGetAllModelModel<ITrainModel>>(this.baseURL + '/getTrainsForCurrentUserTransportCompany', { observe: "response", responseType: "json" });
 
+  }
+
+  findTrainsAsociatedWithIncident(incidentId: string | null, page: number, size: number, sortField: string, sortOrder: string, globalFilter: string): Observable<HttpResponse<IGenericGetAllModelModel<ITrainForScheduleModel>>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', sortField + ',' + sortOrder)
+      .set('globalFilter', globalFilter);
+    return this.http.get<IGenericGetAllModelModel<ITrainForScheduleModel>>(`${this.baseURL}/getTrainsAsociatedWithIncident/${incidentId}`, {params, observe: "response", responseType: "json"})
   }
 }

@@ -16,7 +16,8 @@ import {
   TransportCompanyService,
   UserService,
   LineService,
-  TrainService, FirmService,
+  TrainService,
+  FirmService,
 } from '@rtrain/api';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
@@ -39,19 +40,24 @@ import { TrainsHomeComponent } from './trains/trains-home/trains-home.component'
 import { TrainsCreateViewEditComponent } from './trains/trains-create-view-edit/trains-create-view-edit.component';
 import { FirmsHomeComponent } from './firms/firms-home/firms-home.component';
 import { FirmsCreateViewEditComponent } from './firms/firms-create-view-edit/firms-create-view-edit.component';
+import { ProfilePageComponent } from './profile-page/profile-page.component';
+import {DialogModule} from "primeng/dialog";
+import {UtilModule} from "@rtrain/util";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule.forChild(adminRoutes),
-    MenuModule,
-    FontAwesomeModule,
-    TableModule,
-    BadgeModule,
-    ButtonModule,
-    FormsModule,
-    DropdownModule,
-  ],
+    imports: [
+        CommonModule,
+        RouterModule.forChild(adminRoutes),
+        MenuModule,
+        FontAwesomeModule,
+        TableModule,
+        BadgeModule,
+        ButtonModule,
+        FormsModule,
+        DropdownModule,
+        DialogModule,
+        UtilModule,
+    ],
   exports: [RouterModule, LinesHomeComponent],
   declarations: [
     HomeComponent,
@@ -73,6 +79,7 @@ import { FirmsCreateViewEditComponent } from './firms/firms-create-view-edit/fir
     TrainsCreateViewEditComponent,
     FirmsHomeComponent,
     FirmsCreateViewEditComponent,
+    ProfilePageComponent,
   ],
   providers: [
     UserService,
@@ -84,7 +91,7 @@ import { FirmsCreateViewEditComponent } from './firms/firms-create-view-edit/fir
     TrainTypeService,
     IncidentCodeService,
     TrainService,
-    FirmService
+    FirmService,
   ],
 })
 export class FeaturesAdminModule {}

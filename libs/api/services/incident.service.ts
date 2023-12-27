@@ -20,9 +20,9 @@ export class IncidentService {
         return this.http.get<IGenericGetAllModelModel<IIncidentModel>>(this.baseURL + '/GetAll', { params, observe: "response", responseType: "json" });
     }
 
-    // getById(id: string): Observable<HttpResponse<IUserModel>>{
-    //     return this.http.get(`${this.baseURL}/${id}`, {observe: "response", responseType: "json"})
-    // }
+    getById(id: string): Observable<HttpResponse<IIncidentModel>>{
+        return this.http.get(`${this.baseURL}/${id}`, {observe: "response", responseType: "json"})
+    }
 
     create(incidentObject: IIncidentModel): Observable<HttpResponse<IIncidentModel>> {
         return this.http.post(`${this.baseURL}/Create`, incidentObject, {observe: "response", responseType: "json"})

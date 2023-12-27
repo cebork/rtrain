@@ -6,9 +6,10 @@ import { FooterComponent } from './footer/footer.component';
 import {RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {ToastModule} from "primeng/toast";
 import {MessageService} from "primeng/api";
+import {UtilModule} from "@rtrain/util";
 
 @NgModule({
-  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet, ToastModule],
+    imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet, ToastModule, UtilModule],
   declarations: [LayoutComponent, NavbarComponent, FooterComponent],
   providers: [MessageService],
   exports: [LayoutComponent],
