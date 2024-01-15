@@ -6,17 +6,20 @@
       <input type="text" [formControlName]="'username'" id="login-field" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
     </div>
     <div class="px-80"></div>
-    <div class="mb-6 mx-20">
+    <div class="mb-3 mx-20">
       <label for="password-field" class="block mb-2 text-sm font-medium text-gray-900">Hasło</label>
       <input type="password" [formControlName]="'password'" id="password-field" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+    </div>
+    <div class="mb-3 mx-20">
+      <small *ngIf="error.status === 401 || error.status === 400" style="color: red">Login lub hasło jest niepoprawne</small>
     </div>
     <div class="flex flex-row mb-6 mx-20 ">
       <button (click)="login()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ">
         Zaloguj się
       </button>
     </div>
-    <div class="flex flex-row mb-6 mx-20 justify-end">
-      <a [routerLink]="['/auth/resetPassword']" class="text-blue-500 underline hover:text-blue-700">Resetuj hasło</a>
-    </div>
+<!--    <div class="flex flex-row mb-6 mx-20 justify-end">-->
+<!--      <a [routerLink]="['/auth/resetPassword']" class="text-blue-500 underline hover:text-blue-700">Resetuj hasło</a>-->
+<!--    </div>-->
   </form>
 </div>

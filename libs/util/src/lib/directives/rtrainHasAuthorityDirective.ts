@@ -13,7 +13,6 @@ export class RtrainHasAuthorityDirective implements OnInit {
   ) {
 
   }
-
   ngOnInit() {
     this.accessService.hasAnyAuthority(this.authorities).subscribe((hasAuthority: boolean) => {
       if (hasAuthority && !this.viewContainer.length) this.viewContainer.createEmbeddedView(this.templateRef);

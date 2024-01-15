@@ -15,11 +15,10 @@
         "main": "apps/rtrain/src/main.ts",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/rtrain/tsconfig.app.json",
-        "assets": ["apps/rtrain/src/favicon.ico", "apps/rtrain/src/assets"],
+        "assets": ["apps/rtrain/src/favicon.ico", "apps/rtrain/src/assets", "apps/rtrain/src/web.config"],
         "styles": [
           "apps/rtrain/src/styles.scss",
-          "node_modules/@fortawesome/fontawesome-free/css/all.css",
-
+          "node_modules/@fortawesome/fontawesome-free/css/all.css"
         ],
         "scripts": []
       },
@@ -28,8 +27,8 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumWarning": "4000kb",
+              "maximumError": "4mb"
             },
             {
               "type": "anyComponentStyle",

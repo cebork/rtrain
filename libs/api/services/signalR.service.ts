@@ -45,7 +45,6 @@ export class SignalRService {
     })
   }
 
-
   public disconnect = () => {
     if (this.hubConnection) {
       this.hubConnection.stop()

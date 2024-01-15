@@ -120,7 +120,6 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
         this.createCurrentTimeLine(x);
         this.initializeZoom(x, y);
         this.createIncidentBox(x, y)
-
       });
     }
   }
@@ -129,7 +128,6 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
   listenToIncidentChanges(xAxis: any, yAxis: any){
     this.signalRService.addIncidentsListener().subscribe((data) => {
       if (data) this.incidentsForTrafficGraph = data;
-      console.log(data)
       this.createIncidentBox(xAxis, yAxis)
     })
   }
@@ -559,12 +557,12 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
         .style("opacity", 1)
         .html(`
             <b>Pociąg:</b>
-            <br>Ze stacji: ${d[0].value}
-            <br>Do stacji: ${d[d.length - 1].value}
-            <br>Nazwa: ${d[0].train.name}
-            <br>Kod: ${d[0].train.code}
-            <br>Przeoźnik: ${d[0].train.transportCompany.name} (${d[0].train.transportCompany.symbol})
-            <br>Typ: ${d[0].train.trainType.name} (${d[0].train.trainType.symbol})
+            <br>Ze stacji: ${d && d[0] && d[0].value ? d[0].value : 'brak'}
+            <br>Do stacji: ${ d & d[d.length - 1] && d[d.length - 1].value ? d[d.length - 1].value: 'brak'}
+            <br>Nazwa: ${d && d[0] && d[0].train && d[0].train.name ? d[0].train.name : 'brak'}
+            <br>Kod: ${d && d[0] && d[0].train && d[0].train.code ? d[0].train.code : 'brak'}
+            <br>Przewoźnik: ${d && d[0] && d[0].train && d[0].train.transportCompany && d[0].train.transportCompany.name ? d[0].train.transportCompany.name : 'brak'} (${d && d[0] && d[0].train && d[0].train.transportCompany && d[0].train.transportCompany.symbol ? d[0].train.transportCompany.symbol : 'brak'})
+            <br>Typ: ${d && d[0] && d[0].train && d[0].train.trainType && d[0].train.trainType.name ? d[0].train.trainType.name : 'brak'} (${d && d[0] && d[0].train && d[0].train.trainType && d[0].train.trainType.symbol ? d[0].train.trainType.symbol : 'brak'})
           `);
     } catch (error) {
       console.error(error);
@@ -577,12 +575,12 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
       .style("top", (event.pageY + 10) + "px")
       .html(`
             <b>Pociąg:</b>
-            <br>Ze stacji: ${d[0].value}
-            <br>Do stacji: ${d[d.length - 1].value}
-            <br>Nazwa: ${d[0].train.name}
-            <br>Kod: ${d[0].train.code}
-            <br>Przewoźnik: ${d[0].train.transportCompany.name} (${d[0].train.transportCompany.symbol})
-            <br>Typ: ${d[0].train.trainType.name} (${d[0].train.trainType.symbol})
+            <br>Ze stacji: ${d && d[0] && d[0].value ? d[0].value : 'brak'}
+            <br>Do stacji: ${ d & d[d.length - 1] && d[d.length - 1].value ? d[d.length - 1].value: 'brak'}
+            <br>Nazwa: ${d && d[0] && d[0].train && d[0].train.name ? d[0].train.name : 'brak'}
+            <br>Kod: ${d && d[0] && d[0].train && d[0].train.code ? d[0].train.code : 'brak'}
+            <br>Przewoźnik: ${d && d[0] && d[0].train && d[0].train.transportCompany && d[0].train.transportCompany.name ? d[0].train.transportCompany.name : 'brak'} (${d && d[0] && d[0].train && d[0].train.transportCompany && d[0].train.transportCompany.symbol ? d[0].train.transportCompany.symbol : 'brak'})
+            <br>Typ: ${d && d[0] && d[0].train && d[0].train.trainType && d[0].train.trainType.name ? d[0].train.trainType.name : 'brak'} (${d && d[0] && d[0].train && d[0].train.trainType && d[0].train.trainType.symbol ? d[0].train.trainType.symbol : 'brak'})
           `);
   }
 
@@ -611,7 +609,7 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
         .style("opacity", 1)
         .html(`
             <b>Pociąg:</b>
-            <br>Nazwa: ${d[0].train.name}
+            <br>Nazwa: ${d[0].train && d[0].train.name ? d[0].train.name : 'brak'}
           `);
     } catch (error) {
       console.error(error);
@@ -624,8 +622,8 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
       .style("top", (event.pageY + 10) + "px")
       .html(`
             <b>Pociąg:</b>
-            <br>Ze stacji: ${d[0].value}
-            <br>Do stacji: ${d[d.length - 1].value}
+            <br>Ze stacji: ${d[0] && d[0].value ? d[0].value : 'brak'}
+            <br>Do stacji: ${d[d.length - 1] && d[d.length - 1].value ? d[d.length - 1].value : 'brak'}
           `);
   }
 
@@ -667,12 +665,12 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
         .style("visibility", "visible")
         .style("opacity", 1)
         .html(`
-            <b>Incydent na odcinku ${d.fromStationName} - ${d.fromStationName}</b>
-            <br>Kierunek blokady: ${closingDirection}
-            <br>Data początkowa: ${d.incidentStart}
-            <br>Data końcowa: ${d.incidentEnd}
-            <br>Kod incydentu: ${d.incident.incidentCode.name}
-            <br>Nazwa incydentu: ${d.incident.incidentCode.description}
+            <b>Incydent na odcinku ${d && d.fromStationName ? d.fromStationName : 'brak'} - ${d.fromStationName ? d.fromStationName : 'brak'}</b>
+            <br>Kierunek blokady: ${closingDirection ? closingDirection : 'brak'}
+            <br>Data początkowa: ${d && d.incidentStart ? d.incidentStart : 'brak'}
+            <br>Data końcowa: ${d && d.incidentEnd ? d.incidentEnd : 'brak'}
+            <br>Kod incydentu: ${d && d.incident && d.incident.incidentCode && d.incident.incidentCode.name ? d.incident.incidentCode.name : 'brak'}
+            <br>Nazwa incydentu: ${d && d.incident && d.incident.incidentCode && d.incident.incidentCode.description ? d.incident.incidentCode.description : 'brak'}
           `);
     } catch (error) {
       console.error(error);
@@ -699,12 +697,12 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
       .style("left", (event.pageX + 10) + "px")
       .style("top", (event.pageY + 10) + "px")
       .html(`
-            <b>Incydent na odcinku ${d.fromStationName} - ${d.fromStationName}</b>
-            <br>Kierunek blokady: ${closingDirection}
-            <br>Data początkowa: ${d.incidentStart}
-            <br>Data końcowa: ${d.incidentEnd}
-            <br>Kod incydentu: ${d.incident.incidentCode.name}
-            <br>Nazwa incydentu: ${d.incident.incidentCode.description}
+            <b>Incydent na odcinku ${d && d.fromStationName ? d.fromStationName : 'brak'} - ${d.fromStationName ? d.fromStationName : 'brak'}</b>
+            <br>Kierunek blokady: ${closingDirection ? closingDirection : 'brak'}
+            <br>Data początkowa: ${d && d.incidentStart ? d.incidentStart : 'brak'}
+            <br>Data końcowa: ${d && d.incidentEnd ? d.incidentEnd : 'brak'}
+            <br>Kod incydentu: ${d && d.incident && d.incident.incidentCode && d.incident.incidentCode.name ? d.incident.incidentCode.name : 'brak'}
+            <br>Nazwa incydentu: ${d && d.incident && d.incident.incidentCode && d.incident.incidentCode.description ? d.incident.incidentCode.description : 'brak'}
           `);
   }
 
