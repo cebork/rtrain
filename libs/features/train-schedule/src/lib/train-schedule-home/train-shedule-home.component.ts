@@ -32,9 +32,7 @@ export class TrainSheduleHomeComponent implements OnInit {
     private messageService: MessageService
   ) {}
 
-  ngOnInit() {
-    this.loadLines();
-  }
+  ngOnInit() {}
 
   loadLines(event?: any) {
     this.loading = true;

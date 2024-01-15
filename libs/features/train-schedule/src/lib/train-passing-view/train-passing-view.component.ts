@@ -99,6 +99,7 @@ export class TrainPassingViewComponent implements OnInit {
   equalizeLists(trains: ITrainModel[]){
     this.avaliableTrains = trains.filter(avaTrain => !this.trainsForSchedule.some(tFS => tFS.train?.id === avaTrain.id))
   }
+
   clear(table: Table, filterInput: any) {
     filterInput.value = ''
     this.globalFilter = ''

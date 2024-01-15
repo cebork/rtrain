@@ -35,17 +35,32 @@
             <td  class="px-6 py-4">
               {{trainSchedule.station?.name}}
             </td>
-            <td class="px-6 py-4">
-              <div class="border-2 bg-blue-300 rounded-lg w-1/3 bg-blue-500 flex justify-center items-center">
-                <p-calendar (ngModelChange)="checkIfIsValid()" class="w-full  custom-calendar" name="arrivalTime{{idx}}" [(ngModel)]="trainSchedule.arrivalTime" [timeOnly]="true" [showIcon]="true"></p-calendar>
-              </div>
-            </td>
-            <td >
-              <div class="border-2 bg-blue-300 rounded-lg w-1/3  flex justify-center items-center">
-                <p-calendar (ngModelChange)="checkIfIsValid()" [required]="!trainSchedule.arrivalTime" [disabled]="!trainSchedule.arrivalTime" class="w-full custom-calendar" name="departureTime{{idx}}" [(ngModel)]="trainSchedule.departureTime" [timeOnly]="true" [showIcon]="true"></p-calendar>
-              </div>
-              <small *ngIf="trainSchedule.arrivalTime && trainSchedule.departureTime === null" style="color: red">To pole jest wymagane</small>
-            </td>
+            <ng-container *ngIf="!trainForSchedule?.isOnce">
+              <td class="px-6 py-4" >
+                <div class="border-2 bg-blue-300 rounded-lg w-1/3 bg-blue-500 flex justify-center items-center">
+                  <p-calendar (ngModelChange)="checkIfIsValid()" class="w-full  custom-calendar" name="arrivalTime{{idx}}" [(ngModel)]="trainSchedule.arrivalTime" [timeOnly]="true" [showIcon]="true"></p-calendar>
+                </div>
+              </td>
+              <td >
+                <div class="border-2 bg-blue-300 rounded-lg w-1/3  flex justify-center items-center">
+                  <p-calendar (ngModelChange)="checkIfIsValid()" [required]="!trainSchedule.arrivalTime" [disabled]="!trainSchedule.arrivalTime" class="w-full custom-calendar" name="departureTime{{idx}}" [(ngModel)]="trainSchedule.departureTime" [timeOnly]="true" [showIcon]="true"></p-calendar>
+                </div>
+                <small *ngIf="trainSchedule.arrivalTime && trainSchedule.departureTime === null" style="color: red">To pole jest wymagane</small>
+              </td>
+            </ng-container>
+            <ng-container *ngIf="trainForSchedule?.isOnce">
+              <td class="px-6 py-4" >
+                <div class="border-2 bg-blue-300 rounded-lg w-1/2 bg-blue-500 flex justify-center items-center">
+                  <p-calendar (ngModelChange)="checkIfIsValid()" class="w-full  custom-calendar" name="arrivalTime{{idx}}" [(ngModel)]="trainSchedule.arrivalTime" [showTime]="true" [showIcon]="true"></p-calendar>
+                </div>
+              </td>
+              <td >
+                <div class="border-2 bg-blue-300 rounded-lg w-1/2  flex justify-center items-center">
+                  <p-calendar (ngModelChange)="checkIfIsValid()" [required]="!trainSchedule.arrivalTime" [disabled]="!trainSchedule.arrivalTime" class="w-full custom-calendar" name="departureTime{{idx}}" [(ngModel)]="trainSchedule.departureTime" [showTime]="true" [showIcon]="true"></p-calendar>
+                </div>
+                <small *ngIf="trainSchedule.arrivalTime && trainSchedule.departureTime === null" style="color: red">To pole jest wymagane</small>
+              </td>
+            </ng-container>
           </tr>
         </tbody>
       </table>

@@ -11,7 +11,8 @@ import {
 import {logging} from "@angular-devkit/core";
 import {ITrainScheduleForTrafficGraph} from "../../../../domain/models/train-schedule/train-schedule-for-traffic-graph";
 import {IIncidentForTrafficGraphModel} from "../../../../domain/models/incidentModels/incident-for-traffic-graph.model";
-import {first, forkJoin, tap} from "rxjs";
+import {first, forkJoin, share, tap} from "rxjs";
+import {createLogger} from "@microsoft/signalr/dist/esm/Utils";
 @Component({
   selector: 'rtrain-traffic-graph',
   templateUrl: './traffic-graph.component.html',
@@ -35,6 +36,9 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
   realtimeTrainScheduleDisplay: ITrainScheduleForTrafficGraph[][] = [];
   incidentsForTrafficGraph: IIncidentForTrafficGraphModel[] = [];
 
+  xScale: any;
+  yScale: any;
+  currentTransform: any;
   constructor(
     private trainScheduleService: TrainScheduleService,
     private stationService: StationService,
@@ -106,37 +110,41 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.stations) {
       setTimeout(() => {
         this.createCanvas();
-        const x = this.createXAxis();
-        const y = this.createYAxis(this.stations);
-        this.listenToIncidentChanges(x, y)
-        this.listenToRealtimeTrainScheduleChanges(x, y)
+        this.xScale = this.createXAxis();
+        this.yScale = this.createYAxis(this.stations);
+        this.listenToIncidentChanges();
+        this.listenToRealtimeTrainScheduleChanges();
         this.createClipPath();
         this.createPatterns();
         this.createZoomRect();
-        this.createXGuidelines(x);
-        this.createYGuidelines(y);
-        this.createGraph(x, y);
-        this.createRealTimeGraph(x, y);
-        this.createCurrentTimeLine(x);
-        this.initializeZoom(x, y);
-        this.createIncidentBox(x, y)
+        this.createXGuidelines();
+        this.createYGuidelines();
+        this.createPlannedGraph();
+        this.createRealTimeGraph();
+        this.createIncidentBox();
+        this.createCurrentTimeLine();
+        this.initializeZoom();
+
+
+
       });
     }
   }
 
 
-  listenToIncidentChanges(xAxis: any, yAxis: any){
+  listenToIncidentChanges(){
     this.signalRService.addIncidentsListener().subscribe((data) => {
       if (data) this.incidentsForTrafficGraph = data;
-      this.createIncidentBox(xAxis, yAxis)
+      this.createIncidentBox()
+      this.update(this.currentTransform)
     })
   }
 
-  listenToRealtimeTrainScheduleChanges(xAxis: any, yAxis: any){
+  listenToRealtimeTrainScheduleChanges(){
     this.signalRService.addRealTimeTrainScheduleListener().subscribe((data) => {
       if (data) this.realtimeTrainScheduleDisplay = data;
-      console.log(data)
-      this.createRealTimeGraph(xAxis, yAxis)
+      this.createRealTimeGraph()
+      this.update(this.currentTransform)
     })
   }
 
@@ -167,7 +175,7 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
       .range([0, this.width]);
 
     const xAxis = d3.axisBottom<Date>(xScale)
-      .ticks(d3.timeMinute.every(15))
+      .ticks(d3.timeMinute.every(12))
       .tickFormat(d3.timeFormat("%H:%M"));
 
     this.canvas.append("g")
@@ -212,30 +220,28 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  createXGuidelines(xScale: d3.ScaleTime<number, number>) {
+  createXGuidelines() {
 
     const hourlyInterval = d3.timeHour.every(1);
     if (!hourlyInterval) {
       throw new Error("Invalid interval");
     }
-
-    const xAxisTicks = xScale.ticks(hourlyInterval);
-    this.canvas.selectAll('.x-guide')
-      .data(xAxisTicks)
-      .enter().append('line')
-      .attr('class', 'x-guide')
-      .attr('y1', 0)
-      .attr('y2', this.height)
-      .attr('x1', (d:any) => xScale(d))
-      .attr('x2', (d:any) => xScale(d))
-      .attr('stroke', '#ccc') // or any color you prefer
-      .attr('stroke-dasharray', '2,2')
-      .attr('clip-path', 'url(#clip)');
-
+      const xAxisTicks = this.xScale?.ticks(hourlyInterval);
+      this.canvas.selectAll('.x-guide')
+        .data(xAxisTicks)
+        .enter().append('line')
+        .attr('class', 'x-guide')
+        .attr('y1', 0)
+        .attr('y2', this.height)
+        .attr('x1', (d: any) => this.xScale!(d))
+        .attr('x2', (d: any) => this.xScale!(d))
+        .attr('stroke', '#ccc') // or any color you prefer
+        .attr('stroke-dasharray', '2,2')
+        .attr('clip-path', 'url(#clip)');
   }
 
-  createYGuidelines(yScale: d3.ScaleBand<string>) {
-    const yAxisTicks = yScale.domain();
+  createYGuidelines() {
+    const yAxisTicks = this.yScale?.domain();
 
     this.canvas.selectAll('.y-guide')
       .data(yAxisTicks)
@@ -243,14 +249,14 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
       .attr('class', 'y-guide')
       .attr('x1', 0)
       .attr('x2', this.width)
-      .attr('y1', (d:any) => yScale(d))
-      .attr('y2', (d:any) => yScale(d))
+      .attr('y1', (d: any) => this.yScale!(d))
+      .attr('y2', (d: any) => this.yScale!(d))
       .attr('stroke', '#ccc') // or any color you prefer
       .attr('stroke-dasharray', '2,2')
       .attr('clip-path', 'url(#clip)');
   }
 
-  createCurrentTimeLine(xScale: d3.ScaleTime<number, number>){
+  createCurrentTimeLine(){
     const currentTime = new Date();
 
     const group = this.canvas.append("g")
@@ -258,53 +264,78 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
 
     group.append("line")
       .attr("class", "current-time-line")
-      .attr("x1", xScale(currentTime))
+      .attr("x1", this.xScale(currentTime))
       .attr("y1", 0)
-      .attr("x2", xScale(currentTime))
+      .attr("x2", this.xScale(currentTime))
       .attr("y2", this.height)
       .attr("stroke", "yellow")
       .attr("stroke-width", 2);
   }
 
-  createGraph(xAxis: any, yAxis: any) {
-    const parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S");
+  createPlannedGraph() {
     this.trainSchedulesDisplay.forEach(innerArray => {
-      const transformedData = innerArray.flatMap(schedule => [
-        new SingleLine(parseTime(new Date().toISOString().split('T')[0] + schedule.arrivalTime), schedule.station, schedule.train),
-        new SingleLine(parseTime(new Date().toISOString().split('T')[0] + schedule.departureTime), schedule.station, schedule.train)
-      ]);
-      const line = d3.line<ISingleLine>()
-        .x(d => xAxis(d.time))
-        .y(d => yAxis(d.value));
-
-      // Create a group and append a path for each schedule
-      this.canvas.append("g")
-        .attr('clip-path', 'url(#clip)')
-        .append("path")
-        .datum(transformedData)
-        .attr("class", "line-path")
-        .attr("fill", "none")
-        .attr("stroke", "black")
-        .attr("stroke-width", 1)
-        .attr("d", line)
-        .style('pointer-events', 'visiblePainted')
-        .on("mouseover", this.handleMouseOverTS.bind(this))
-        .on("mousemove", this.handleMouseMoveTS.bind(this))
-        .on("mouseout", this.handleMouseOutTS.bind(this));
+      if (innerArray[0].isOnce){
+        this.addSinglePath(innerArray)
+      } else {
+        for (let i = -3; i < 4; i++) {
+          this.addSinglePath(innerArray, i)
+        }
+      }
     });
   }
 
-  createRealTimeGraph(xAxis: any, yAxis: any){
+  addSinglePath(innerArray: ITrainScheduleForTrafficGraph[], i?: number){
+    const parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S");
+    const currentDate = new Date();
+    if (i)
+      currentDate.setDate(currentDate.getDate() + i);
+    const movedDate = currentDate.toISOString().split("T")[0];
+    let transformedData: ISingleLine[] = [];
+    if (innerArray[0].isOnce) {
+      transformedData = innerArray.flatMap(schedule => [
+        new SingleLine(parseTime(schedule.arrivalTime), schedule.station, schedule.train),
+        new SingleLine(parseTime(schedule.departureTime), schedule.station, schedule.train)
+      ]);
+    }else{
+      transformedData = innerArray.flatMap(schedule => [
+        new SingleLine(parseTime(movedDate + 'T' + schedule.arrivalTime.split('T')[1].split(".")[0]), schedule.station, schedule.train),
+        new SingleLine(parseTime(movedDate + 'T' + schedule.departureTime.split('T')[1].split(".")[0]), schedule.station, schedule.train)
+      ]);
+    }
+
+    console.log(transformedData)
+    const line = d3.line<ISingleLine>()
+      .x(d => this.xScale(d.time))
+      .y(d => this.yScale(d.value));
+
+    // Create a group and append a path for each schedule
+    this.canvas.append("g")
+      .attr('clip-path', 'url(#clip)')
+      .append("path")
+      .datum(transformedData)
+      .attr("class", "line-path")
+      .attr("fill", "none")
+      .attr("stroke", "black")
+      .attr("stroke-width", 1)
+      .attr("d", line)
+      .style('pointer-events', 'visiblePainted')
+      .on("mouseover", this.handleMouseOverTS.bind(this))
+      .on("mousemove", this.handleMouseMoveTS.bind(this))
+      .on("mouseout", this.handleMouseOutTS.bind(this));
+  }
+
+  createRealTimeGraph(){
     this.removeElementsByClass("line-path-realtime")
     const parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S");
     this.realtimeTrainScheduleDisplay.forEach(innerArray => {
       const transformedData = innerArray.flatMap(schedule => [
-        new SingleLine(parseTime(new Date().toISOString().split('T')[0] + schedule.arrivalTime), schedule.station, schedule.train),
-        new SingleLine(parseTime(new Date().toISOString().split('T')[0] + schedule.departureTime), schedule.station, schedule.train)
+        new SingleLine(parseTime(schedule.arrivalTime), schedule.station, schedule.train),
+        new SingleLine(parseTime(schedule.departureTime), schedule.station, schedule.train)
       ]);
+
       const line = d3.line<ISingleLine>()
-        .x(d => xAxis(d.time))
-        .y(d => yAxis(d.value));
+        .x(d => this.xScale(d.time))
+        .y(d => this.yScale(d.value));
 
       const group = this.canvas.append("g")
         .attr('clip-path', 'url(#clip)');
@@ -323,15 +354,15 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  createIncidentBox(xAxis: any, yAxis: any) {
+  createIncidentBox() {
     this.removeElementsByClass("incident-box")
     this.incidentsForTrafficGraph.forEach(iFTG => {
-      const xPosition = xAxis(new Date(iFTG.incidentStart));
-      const xEndPosition = xAxis(new Date(iFTG.incidentEnd));
+      const xPosition = this.xScale(new Date(iFTG.incidentStart));
+      const xEndPosition = this.xScale(new Date(iFTG.incidentEnd));
       const boxWidth = Math.max(0, xEndPosition - xPosition);
 
-      const yPosition = yAxis(iFTG.toStationName);
-      const yEndPosition = yAxis(iFTG.fromStationName);
+      const yPosition = this.yScale(iFTG.toStationName);
+      const yEndPosition = this.yScale(iFTG.fromStationName);
       const boxHeight = Math.max(0, yEndPosition - yPosition);
 
       let incidentType = ''
@@ -374,61 +405,41 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  private initializeZoom(xScale: d3.ScaleTime<number, number>, yScale: d3.ScaleBand<string>): void {
+  private initializeZoom(): void {
     const initScale = 4
     const currentDate = new Date();
-    const currentHourDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours());
-    const currentHourDate2 = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours());
 
+    const xPosition = this.xScale(currentDate.setDate(currentDate.getUTCDate() + 1));
 
-    const xOffset = xScale(currentHourDate);
-    const initialTransform = d3.zoomIdentity.translate(xOffset, 0).scale(initScale);
+    let centeredXPosition = 0;
+    if (xPosition < 1400) {
+      centeredXPosition = -xPosition * 2.5;
+    } else {
+      centeredXPosition = -5077  + xPosition;
+    }
 
-    const newXScale = initialTransform.rescaleX(xScale);
-    const endOfx = newXScale(currentHourDate2.setDate(currentHourDate2.getDate() + 1))
-    const tempXOffset = newXScale(currentHourDate);
-    const correctXOffset = (tempXOffset - (endOfx - tempXOffset)) * -1
-
-    const correctTransform = d3.zoomIdentity.translate(correctXOffset, 0).scale(initScale);
-
-    let first = 0;
+    const initialTransform = d3.zoomIdentity.translate(centeredXPosition, 0).scale(initScale);
 
     const zoomBehavior = d3.zoom<SVGSVGElement, unknown>()
-      .scaleExtent([4, 20]) // Keep your scale extent starting at 4
-      .translateExtent([[0, 0], [this.width, this.height]]) // Set translate extent to restrict panning
+      .scaleExtent([4, 20])
+      .translateExtent([[0, 0], [this.width, this.height]])
       .on('zoom', (event) => {
-        // Enforce the minimum scale of 4
-        if (event.transform.k < 4) {
-          event.transform.k = 4;
-        }
-        if (first === 1) {
-          first = 2;
-          event.transform.x = correctTransform;
-
-        }
-        if (first === 0) first++;
-        // const newXScale = event.transform.rescaleX(xScale)
-        if (event.transform.x < 50) this.update(event.transform, xScale);
+        this.update(event.transform);
       });
 
+    this.canvas.call(zoomBehavior);
 
-    this.canvas.call(zoomBehavior.transform, correctXOffset);
 
-    this.update(correctTransform, xScale);
-
-    this.canvas.select('.zoom-rect').call(zoomBehavior);
-
+    this.canvas.call(zoomBehavior.transform, initialTransform);
   }
 
-  update(transform: d3.ZoomTransform, xScale: d3.ScaleTime<number, number>) {
-
-
-    const newXScale = transform.rescaleX(xScale);
+  update(transform: d3.ZoomTransform) {
+    this.currentTransform = transform;
+    const newXScale = transform.rescaleX(this.xScale);
 
     this.canvas.select('.x-axis').call(d3.axisBottom<Date>(newXScale)
-      .ticks(d3.timeMinute.every(15))
+      .ticks(d3.timeMinute.every(12))
       .tickFormat(d3.timeFormat("%H:%M")));
-
 
     this.canvas.selectAll(".x-axis text")
       .attr("transform", "rotate(45)")
@@ -459,82 +470,6 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
 
-  createPatterns(){
-    //
-    this.canvas.append('defs')
-      .append('pattern')
-      .attr('id', 'diagonal-hatch-left-b-right-t')
-      .attr('patternUnits', 'userSpaceOnUse')
-      .attr('width', 15)
-      .attr('height', 15)
-      .append('path')
-      .attr('d', 'M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
-      .attr('stroke', 'red')
-      .attr('stroke-width', 2)
-      .attr('stroke-linecap', 'square');
-
-    this.canvas.append('defs')
-      .append('pattern')
-      .attr('id', 'diagonal-hatch-left-t-right-b')
-      .attr('patternUnits', 'userSpaceOnUse')
-      .attr('width', 15)
-      .attr('height', 15)
-      .append('path')
-      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2')
-      .attr('stroke', 'red')
-      .attr('stroke-width', 2)
-      .attr('stroke-linecap', 'square');
-
-    this.canvas.append('defs')
-      .append('pattern')
-      .attr('id', 'diagonal-hatch-both')
-      .attr('patternUnits', 'userSpaceOnUse')
-      .attr('width', 15)
-      .attr('height', 15)
-      .append('path')
-      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2 M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
-      .attr('stroke', 'red')
-      .attr('stroke-width', 2)
-      .attr('stroke-linecap', 'square');
-
-
-    this.canvas.append('defs')
-      .append('pattern')
-      .attr('id', 'diagonal-hatch-left-b-right-t-hover')
-      .attr('patternUnits', 'userSpaceOnUse')
-      .attr('width', 15)
-      .attr('height', 15)
-      .append('path')
-      .attr('d', 'M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
-      .attr('stroke', 'blue')
-      .attr('stroke-width', 2)
-      .attr('stroke-linecap', 'square');
-
-    this.canvas.append('defs')
-      .append('pattern')
-      .attr('id', 'diagonal-hatch-left-t-right-b-hover')
-      .attr('patternUnits', 'userSpaceOnUse')
-      .attr('width', 15)
-      .attr('height', 15)
-      .append('path')
-      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2')
-      .attr('stroke', 'blue')
-      .attr('stroke-width', 2)
-      .attr('stroke-linecap', 'square');
-
-    this.canvas.append('defs')
-      .append('pattern')
-      .attr('id', 'diagonal-hatch-both-hover')
-      .attr('patternUnits', 'userSpaceOnUse')
-      .attr('width', 15)
-      .attr('height', 15)
-      .append('path')
-      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2 M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
-      .attr('stroke', 'blue')
-      .attr('stroke-width', 2)
-      .attr('stroke-linecap', 'square');
-
-  }
 
 
 
@@ -726,4 +661,80 @@ export class TrafficGraphComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
 
+
+  createPatterns(){
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-left-b-right-t')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
+      .attr('stroke', 'red')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-left-t-right-b')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2')
+      .attr('stroke', 'red')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-both')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2 M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
+      .attr('stroke', 'red')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+
+
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-left-b-right-t-hover')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
+      .attr('stroke', 'blue')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-left-t-right-b-hover')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2')
+      .attr('stroke', 'blue')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+
+    this.canvas.append('defs')
+      .append('pattern')
+      .attr('id', 'diagonal-hatch-both-hover')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 15)
+      .attr('height', 15)
+      .append('path')
+      .attr('d', 'M0,0 l15,15 M-1,14 l2,2 M14,-1 l2,2 M-1,1 l2,-2 M0,15 l15,-15 M14,16 l2,-2')
+      .attr('stroke', 'blue')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'square');
+
+  }
 }

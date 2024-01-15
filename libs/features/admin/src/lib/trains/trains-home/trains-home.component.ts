@@ -28,9 +28,7 @@ export class TrainsHomeComponent implements OnInit {
     private messageService: MessageService
   ) {}
 
-  ngOnInit() {
-    this.loadTrains();
-  }
+  ngOnInit() {}
 
   loadTrains(event?: any) {
     this.loading = true;

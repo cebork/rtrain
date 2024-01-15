@@ -105,46 +105,66 @@
                  name="job_position"
                  id="field_job_position"
                  [(ngModel)]="account.jobPosition"
-                 minlength="5"
-                 required
-                 maxlength="254"
                  [disabled]="true"
           />
         </div>
       </div>
 
-<!--      <div class="col-lg-6 bg-white rounded-xl p-7 ml-7 mt-7">-->
-<!--        <h3 class="text-3xl font-bold text-left mb-1">{{'profile.userOrganisationData' | translate}}</h3>-->
-<!--        <hr class="mb-2">-->
-<!--        <div class="flex flex-row">-->
-<!--          <div class="flex flex-col w-11/12 m-2">-->
-<!--            <label class="" for="field_organization_name">{{ "profile.organizationName" | translate }}</label>-->
-<!--            <input *ngIf="account"-->
-<!--                   [class]="'border-b-2 focus:outline-none focus:border-primary-base pt-3 px-1 text-gray-400'"-->
-<!--                   name="first_name"-->
-<!--                   id="field_organization_name"-->
-<!--                   [(ngModel)]="account.organization.name"-->
-<!--                   minlength="1"-->
-<!--                   required-->
-<!--                   maxlength="254"-->
-<!--                   [disabled]="true"-->
-<!--            />-->
-<!--          </div>-->
-<!--          <div class="flex flex-col w-1/12 m-2">-->
-<!--            <label class="" for="field_organization_shortName">{{ "profile.organizationSymbol" | translate }}</label>-->
-<!--            <input *ngIf="account"-->
-<!--                   [class]="'border-b-2 focus:outline-none focus:border-primary-base pt-3 px-1 text-gray-400'"-->
-<!--                   name="last_name"-->
-<!--                   id="field_organization_shortName"-->
-<!--                   [(ngModel)]="account.organization.shortName"-->
-<!--                   minlength="1"-->
-<!--                   required-->
-<!--                   maxlength="254"-->
-<!--                   [disabled]="true"-->
-<!--            />-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div class="col-lg-6 bg-white rounded-xl p-7 ml-7 mt-7">
+        <h3 class="text-3xl font-bold text-left mb-1">Miejsca pracy</h3>
+        <hr class="mb-2">
+        <div class="flex flex-col">
+          <div class="flex flex-col m-2" *ngIf="account?.station">
+            <label class="" for="station">Stacja</label>
+            <input *ngIf="account"
+                   [class]="'border-b-2 focus:outline-none focus:border-primary-base pt-3 px-1 text-gray-400'"
+                   name="station"
+                   id="station"
+                   [value]="account.station?.name"
+                   [disabled]="true"
+            />
+          </div>
+        </div>
+
+        <div class="flex flex-col">
+          <div class="flex flex-col m-2" *ngIf="account?.transportCompany">
+            <label class="" for="transport_company">Przewoźnik</label>
+            <input *ngIf="account"
+                   [class]="'border-b-2 focus:outline-none focus:border-primary-base pt-3 px-1 text-gray-400'"
+                   name="transport_company"
+                   id="transport_company"
+                   [value]="account.transportCompany?.name"
+                   [disabled]="true"
+            />
+          </div>
+        </div>
+
+        <div class="flex flex-col">
+          <div class="flex flex-col m-2" *ngIf="account?.line">
+            <label class="" for="line">Linia</label>
+            <input *ngIf="account"
+                   [class]="'border-b-2 focus:outline-none focus:border-primary-base pt-3 px-1 text-gray-400'"
+                   name="line"
+                   id="line"
+                   [value]="account.line?.name"
+                   [disabled]="true"
+            />
+          </div>
+        </div>
+
+        <div class="flex flex-col">
+          <div class="flex flex-col m-2" *ngIf="account?.firm">
+            <label class="" for="firm">Zakład</label>
+            <input *ngIf="account"
+                   [class]="'border-b-2 focus:outline-none focus:border-primary-base pt-3 px-1 text-gray-400'"
+                   name="firm"
+                   id="firm"
+                   [value]="account.firm?.name"
+                   [disabled]="true"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

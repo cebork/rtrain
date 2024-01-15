@@ -5,6 +5,7 @@ export interface ITrainScheduleForTrafficGraph {
   arrivalTime: string;
   station: string
   train: ITrainModel;
+  isOnce: boolean;
 }
 
 export class TTrainScheduleForTrafficGraph implements ITrainScheduleForTrafficGraph {
@@ -12,12 +13,14 @@ export class TTrainScheduleForTrafficGraph implements ITrainScheduleForTrafficGr
   departureTime: string;
   station: string
   train: ITrainModel;
+  isOnce: boolean;
 
 
-  constructor(arrivalTime: string, departureTime: string, station: string, train: ITrainModel) {
+  constructor(arrivalTime: string, departureTime: string, station: string, train: ITrainModel, isOnce: boolean) {
     this.arrivalTime = arrivalTime;
     this.departureTime = departureTime;
     this.station = station;
     this.train = train;
+    this.isOnce = isOnce;
   }
 }
